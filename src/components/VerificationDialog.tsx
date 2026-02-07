@@ -13,8 +13,10 @@ interface VerificationDialogProps {
 }
 
 export default function VerificationDialog({ room, onClose, onSave }: VerificationDialogProps) {
-  const [verificationType, setVerificationType] = useState<'license' | 'voter' | ''>('');
-  const [verificationId, setVerificationId] = useState(room.ownerVerificationId || '');
+  const [verificationType, setVerificationType] = useState<'license' | 'voter' | 'aadhaar' | ''>('');
+  const [verificationId, setVerificationId] = useState(room.identityNumber || '');
+  const [hasRentalAgreement, setHasRentalAgreement] = useState(room.hasRentalAgreement || false);
+  const [hasOwnershipAgreement, setHasOwnershipAgreement] = useState(room.hasOwnershipAgreement || false);
   const [error, setError] = useState('');
   const [isVerified, setIsVerified] = useState(room.ownerVerificationStatus === 'Verified');
 
@@ -28,6 +30,18 @@ export default function VerificationDialog({ room, onClose, onSave }: Verificati
     // Format: 8-12 alphanumeric characters
     const voterRegex = /^[A-Z0-9]{8,12}$/i;
     return voterRegex.test(id.trim());
+  };
+
+  const validateAadhaar = (id: string): boolean => {
+    // Format: 12 digits
+    const aadhaarRegex = /^[0-9]{12}$/;
+    return aadhaarRegex.test(id.trim());
+  };
+
+  const validatePAN = (id: string): boolean => {
+    // Format: 10 alphanumeric characters (PAN format: AAAAA0000A)
+    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+    return panRegex.test(id.trim());
   };
 
   const handleVerify = () => {
@@ -56,6 +70,12 @@ export default function VerificationDialog({ room, onClose, onSave }: Verificati
         setError('Invalid Voter ID format. Use 8-12 alphanumeric characters.');
         return;
       }
+    } else if (verificationType === 'aadhaar') {
+      isValid = validateAadhaar(verificationId);
+      if (!isValid) {
+        setError('Invalid Aadhaar format. Use 12 digits.');
+        return;
+      }
     }
 
     setIsVerified(true);
@@ -70,7 +90,9 @@ export default function VerificationDialog({ room, onClose, onSave }: Verificati
     const updatedRoom: Rooms = {
       ...room,
       ownerVerificationStatus: 'Verified',
-      ownerVerificationId: verificationId,
+      identityNumber: verificationId,
+      hasRentalAgreement: hasRentalAgreement,
+      hasOwnershipAgreement: hasOwnershipAgreement,
     };
 
     onSave(updatedRoom);
@@ -109,6 +131,19 @@ export default function VerificationDialog({ room, onClose, onSave }: Verificati
                     <input
                       type="radio"
                       name="verificationType"
+                      value="aadhaar"
+                      checked={verificationType === 'aadhaar'}
+                      onChange={(e) => setVerificationType(e.target.value as 'aadhaar')}
+                      className="w-4 h-4"
+                    />
+                    <span className="font-paragraph text-sm text-foreground">
+                      Aadhaar / PAN Number
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-3 p-3 border border-grey300 cursor-pointer hover:bg-grey100">
+                    <input
+                      type="radio"
+                      name="verificationType"
                       value="license"
                       checked={verificationType === 'license'}
                       onChange={(e) => setVerificationType(e.target.value as 'license')}
@@ -137,23 +172,55 @@ export default function VerificationDialog({ room, onClose, onSave }: Verificati
               {verificationType && (
                 <div>
                   <Label htmlFor="verificationId" className="font-paragraph text-sm text-foreground mb-2 block">
-                    {verificationType === 'license' ? 'Driving License Number' : 'Voter ID Number'} *
+                    {verificationType === 'aadhaar' ? 'Aadhaar / PAN Number' : verificationType === 'license' ? 'Driving License Number' : 'Voter ID Number'} *
                   </Label>
                   <Input
                     id="verificationId"
                     type="text"
                     value={verificationId}
                     onChange={(e) => setVerificationId(e.target.value)}
-                    placeholder={verificationType === 'license' ? 'Enter license number' : 'Enter voter ID number'}
+                    placeholder={verificationType === 'aadhaar' ? 'Enter Aadhaar (12 digits) or PAN' : verificationType === 'license' ? 'Enter license number' : 'Enter voter ID number'}
                     className="bg-background border-grey300 uppercase"
                   />
                   <p className="font-paragraph text-xs text-secondary mt-2">
-                    {verificationType === 'license'
+                    {verificationType === 'aadhaar'
+                      ? 'Format: 12 digits for Aadhaar or AAAAA0000A for PAN'
+                      : verificationType === 'license'
                       ? 'Format: 10-15 alphanumeric characters'
                       : 'Format: 8-12 alphanumeric characters'}
                   </p>
                 </div>
               )}
+
+              <div className="border-t border-grey200 pt-4">
+                <Label className="font-paragraph text-sm text-foreground mb-3 block">
+                  Agreements
+                </Label>
+                <div className="space-y-3">
+                  <label className="flex items-start gap-3 p-3 border border-grey300 cursor-pointer hover:bg-grey100">
+                    <input
+                      type="checkbox"
+                      checked={hasRentalAgreement}
+                      onChange={(e) => setHasRentalAgreement(e.target.checked)}
+                      className="w-4 h-4 mt-0.5"
+                    />
+                    <span className="font-paragraph text-sm text-foreground">
+                      I have a valid Rental Agreement
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-3 p-3 border border-grey300 cursor-pointer hover:bg-grey100">
+                    <input
+                      type="checkbox"
+                      checked={hasOwnershipAgreement}
+                      onChange={(e) => setHasOwnershipAgreement(e.target.checked)}
+                      className="w-4 h-4 mt-0.5"
+                    />
+                    <span className="font-paragraph text-sm text-foreground">
+                      I have Home Ownership Agreement / Proof
+                    </span>
+                  </label>
+                </div>
+              </div>
 
               {error && (
                 <div className="p-3 bg-destructive/10 border border-destructive rounded flex items-start gap-2">

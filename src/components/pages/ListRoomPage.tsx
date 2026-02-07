@@ -39,6 +39,7 @@ export default function ListRoomPage() {
   });
   const [roomPhotos, setRoomPhotos] = useState<string[]>([]);
   const [photoInput, setPhotoInput] = useState('');
+  const [fileInputRef, setFileInputRef] = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -89,6 +90,30 @@ export default function ListRoomPage() {
     if (photoInput.trim() && roomPhotos.length < 5) {
       setRoomPhotos([...roomPhotos, photoInput.trim()]);
       setPhotoInput('');
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newPhotos: string[] = [];
+      for (let i = 0; i < files.length && roomPhotos.length + newPhotos.length < 5; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            newPhotos.push(event.target.result as string);
+            if (newPhotos.length === Math.min(files.length, 5 - roomPhotos.length)) {
+              setRoomPhotos([...roomPhotos, ...newPhotos]);
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    // Reset file input
+    if (fileInputRef) {
+      fileInputRef.value = '';
     }
   };
 
@@ -399,7 +424,7 @@ export default function ListRoomPage() {
                     Room Photos
                   </h2>
                   <p className="font-paragraph text-sm text-secondary mb-4">
-                    Add up to 5 room photos using image URLs (e.g., from Wix Media or other image hosting services)
+                    Add up to 5 room photos using image URLs or upload from your device
                   </p>
 
                   <div className="space-y-4">
@@ -418,6 +443,28 @@ export default function ListRoomPage() {
                         className="bg-primary text-primary-foreground hover:bg-primary/90"
                       >
                         Add Photo
+                      </Button>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <input
+                        ref={setFileInputRef}
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        disabled={roomPhotos.length >= 5}
+                        className="hidden"
+                        id="photoFileInput"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => document.getElementById('photoFileInput')?.click()}
+                        disabled={roomPhotos.length >= 5}
+                        variant="outline"
+                        className="flex-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        Upload from Device
                       </Button>
                     </div>
 
