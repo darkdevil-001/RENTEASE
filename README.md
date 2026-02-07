@@ -1,147 +1,181 @@
-# Wixstro - Wix Astro Template
+🏠 RentEase
 
-A modern, full-featured Wix Astro template built with React, TypeScript, and Tailwind CSS. This template provides a solid foundation for building dynamic, interactive websites with Wix's powerful ecosystem.
+Preference-Based Room & Roommate Finder with Trust Layers
 
-## 🚀 Features
+📌 Overview
 
-- **Astro Framework** - Modern static site generator with server-side rendering
-- **React Integration** - Full React support with JSX components
-- **TypeScript** - Type-safe development experience
-- **Tailwind CSS** - Utility-first CSS framework with custom components
-- **Wix Integration** - Seamless integration with Wix services and APIs
-- **Modern UI Components** - Radix UI components with custom styling
-- **Authentication** - Built-in member authentication and protected routes
-- **CMS Integration** - Content management system integration
-- **Client-side Routing** - React Router for seamless navigation
-- **Responsive Design** - Mobile-first responsive design
-- **Testing** - Vitest testing framework setup
-- **Development Tools** - ESLint, TypeScript checking, and more
+RentEase is a web application designed to simplify the process of finding rooms, roommates, and shared living spaces.
+It focuses on preference-based matching, group room sharing, and basic trust mechanisms, while keeping the platform simple, privacy-friendly, and easy to use.
 
-## 🛠️ Tech Stack
+The application supports both:
 
-- **Framework**: Astro 5.8.0
-- **Frontend**: React 18.3.0
-- **Styling**: Tailwind CSS 3.4.14
-- **Language**: TypeScript 5.8.3
-- **UI Components**: Radix UI
-- **State Management**: Zustand
-- **Forms**: React Hook Form with Zod validation
-- **Testing**: Vitest
-- **Build Tool**: Vite
-- **Deployment**: Cloudflare
+People searching for rooms
 
+Room owners listing available or partially occupied rooms
 
-## 🚀 Getting Started
+🎯 Problem Statement
 
-### Prerequisites
+Finding a room or compatible roommates is often difficult due to:
 
-- Node.js (version 18 or higher)
-- npm or yarn package manager
-- Wix account and site
+Lack of structured filtering
 
-### Installation
+Poor roommate compatibility
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+Unclear occupancy details
 
-2. **Set up environment variables**:
-   ```bash
-   npm run env
-   ```
+Limited trust between users
 
-3. **Start development server**:
-   ```bash
-   npm run dev
-   ```
+RentEase addresses these issues by enabling preference-based discovery, shared room visibility, and clear occupancy information.
 
-The development server will start and you can view your site at `http://localhost:4321`.
+🚀 Key Features
+🔍 Find a Room
 
-## 📁 Project Structure
+Users can search for rooms based on:
 
-```
-main/
-├── src/
-│   ├── components/          # React components
-│   │   ├── ui/             # Reusable UI components
-│   │   ├── Head.tsx        # Page head component
-│   │   └── Router.tsx      # Routing component
-│   ├── hooks/              # Custom React hooks
-│   ├── lib/                # Utility functions
-│   ├── pages/              # Astro pages
-│   └── styles/             # Global styles
-├── integrations/           # Wix integrations
-│   ├── cms/               # CMS integration
-│   └── members/           # Member authentication
-├── public/                # Static assets
-└── eslint-rules/          # Custom ESLint rules
-```
+Preferred location
 
-## 🎨 UI Components
+Budget range
 
-This template includes a comprehensive set of UI components built with Radix UI and styled with Tailwind CSS:
+Room type (Private / Shared)
 
-- **Layout**: Accordion, Collapsible, Tabs, Sheet
-- **Forms**: Input, Select, Checkbox, Radio Group, Switch
-- **Navigation**: Navigation Menu, Menubar, Breadcrumb
-- **Feedback**: Alert, Toast, Progress, Skeleton
-- **Overlays**: Dialog, Popover, Tooltip, Hover Card
-- **Data Display**: Table, Card, Badge, Avatar
-- **Interactive**: Button, Toggle, Slider, Command
+Payment type (Rent / Lease / Rent + Lease)
 
-## 🔧 Available Scripts
+Move-in date
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run release` - Release to Wix
-- `npm run env` - Pull environment variables
-- `npm run check` - Type check with Astro
-- `npm run test:run` - Run tests
-- `npm install` - Install dependencies
+Lifestyle preferences
 
-## 🧪 Testing
+Search results update dynamically without altering the existing UI flow.
 
-The project includes Vitest for testing:
+🏠 List a Room
 
-```bash
-npm run test:run
-```
+Room owners can list:
 
-## 📱 Responsive Design
+Fully vacant rooms
 
-The template is built with a mobile-first approach and includes:
+Partially occupied rooms (rooms that already have members but still have space)
 
-- Responsive breakpoints
-- Touch-friendly interactions
-- Optimized images
-- Flexible layouts
+Additional details for partially occupied rooms:
 
-## 🚀 Deployment
+Total room capacity (2–6 members)
 
-The template is configured for deployment on Cloudflare:
+Current members present
 
-```bash
-npm run build
-```
+Available slots (auto-calculated)
 
-## 🤝 Contributing
+Existing members’ lifestyle preferences
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
+All listing details are editable from the dashboard.
 
-## 🆘 Support
+👥 Roommate Groups
 
-For support and questions:
+Users can form or join roommate groups with shared features such as:
 
-- Check the [Wix Developer Documentation](https://dev.wix.com/)
-- Review the [Astro Documentation](https://docs.astro.build/)
+Group visibility
 
+Preference matching
 
----
+Member count display
 
-Built with ❤️ using Wix Vibe, Astro, and modern web technologies.
+📝 Monthly To-Do & Expense Split
+
+Each group includes a monthly to-do list:
+
+Rent
+
+Electricity bill
+
+Water bill
+
+Internet
+
+Custom expenses
+
+Each item:
+
+Stores total amount
+
+Splits cost equally among members
+
+Supports edit and delete actions
+
+🔐 Basic Trust & Verification
+
+Optional identity verification using:
+
+Driving License number OR
+
+Voter ID number
+
+Format validation only
+
+No document uploads or storage
+
+Verification status shown as a trust indicator
+
+👤 Profile Management
+
+Clicking the user name (top-right corner) opens profile settings
+
+Users can update:
+
+Name
+
+Email
+
+Phone number
+
+Basic preferences
+
+Updates do not affect login state
+
+🛠️ Technical Details
+
+Platform: Wix Studio
+
+Logic: Client-side (Velo)
+
+Data Storage:
+
+Wix Data Collections OR
+
+LocalStorage (for demo/hackathon use)
+
+Responsive design
+
+Clean, modular, and maintainable codebase
+
+🔒 Privacy & Safety
+
+No sensitive document storage
+
+No payment handling
+
+No backend authentication dependency
+
+Users exchange documents outside the platform
+
+📦 Out of Scope (Future Enhancements)
+
+In-app chat
+
+Payment integration
+
+Advanced verification
+
+Admin moderation
+
+Real backend authentication
+
+🧪 Project Status
+
+Functional prototype
+
+UI and core flows completed
+
+Feature-extended without redesign
+
+Suitable for hackathons, demos, and concept validation
+
+📄 License
+
+This project is intended for educational, demo, and hackathon purposes.
