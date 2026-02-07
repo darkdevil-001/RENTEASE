@@ -7,11 +7,13 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import CreateGroupDialog from '@/components/CreateGroupDialog';
+import GroupExpensesDialog from '@/components/GroupExpensesDialog';
 
 export default function RoommateGroupsPage() {
   const [groups, setGroups] = useState<RoommateGroups[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [selectedGroupForExpenses, setSelectedGroupForExpenses] = useState<RoommateGroups | null>(null);
 
   useEffect(() => {
     loadGroups();
@@ -166,6 +168,13 @@ export default function RoommateGroupsPage() {
                     <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
                       Join Group
                     </Button>
+                    <Button 
+                      onClick={() => setSelectedGroupForExpenses(group)}
+                      variant="outline"
+                      className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground mt-2"
+                    >
+                      View Expenses
+                    </Button>
                   </motion.div>
                 ))}
               </motion.div>
@@ -194,6 +203,14 @@ export default function RoommateGroupsPage() {
         <CreateGroupDialog
           onClose={() => setShowCreateDialog(false)}
           onCreate={handleCreateGroup}
+        />
+      )}
+
+      {selectedGroupForExpenses && (
+        <GroupExpensesDialog
+          groupId={selectedGroupForExpenses._id}
+          groupSize={selectedGroupForExpenses.groupSize || 1}
+          onClose={() => setSelectedGroupForExpenses(null)}
         />
       )}
 

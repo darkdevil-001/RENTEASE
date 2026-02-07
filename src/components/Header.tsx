@@ -2,9 +2,12 @@ import { Link } from 'react-router-dom';
 import { useMember } from '@/integrations';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useState } from 'react';
+import ProfileUpdateDialog from '@/components/ProfileUpdateDialog';
 
 export default function Header() {
   const { member, isAuthenticated, isLoading, actions } = useMember();
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
 
   return (
     <header className="w-full border-b border-grey200 bg-background">
@@ -36,9 +39,12 @@ export default function Header() {
               <LoadingSpinner />
             ) : isAuthenticated ? (
               <>
-                <span className="font-paragraph text-base text-foreground">
+                <button 
+                  onClick={() => setShowProfileDialog(true)}
+                  className="font-paragraph text-base text-foreground hover:text-primary transition-colors cursor-pointer"
+                >
                   {member?.profile?.nickname || member?.contact?.firstName || 'User'}
-                </span>
+                </button>
                 <Button 
                   onClick={actions.logout}
                   variant="outline" 
@@ -64,6 +70,12 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      {showProfileDialog && (
+        <ProfileUpdateDialog
+          onClose={() => setShowProfileDialog(false)}
+        />
+      )}
     </header>
   );
 }

@@ -370,6 +370,11 @@ export default function FindRoomPage() {
                                 {room.foodPreference}
                               </span>
                             )}
+                            {room.occupancyType === 'Partially Occupied' && (
+                              <span className="font-paragraph text-xs text-foreground bg-primary/10 px-3 py-1 border border-primary">
+                                {room.currentMembers} member{room.currentMembers !== 1 ? 's' : ''} • {Math.max(0, (room.capacity || 0) - (room.currentMembers || 0))} slot{Math.max(0, (room.capacity || 0) - (room.currentMembers || 0)) !== 1 ? 's' : ''} available
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>

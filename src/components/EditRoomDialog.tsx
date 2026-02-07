@@ -27,6 +27,9 @@ export default function EditRoomDialog({ room, onClose, onSave }: EditRoomDialog
     isSmokingAllowed: room.isSmokingAllowed || false,
     foodPreference: room.foodPreference || '',
     socialPreference: room.socialPreference || '',
+    occupancyType: room.occupancyType || 'Fully Vacant',
+    currentMembers: room.currentMembers?.toString() || '',
+    existingMembersPreferences: room.existingMembersPreferences || '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,6 +48,9 @@ export default function EditRoomDialog({ room, onClose, onSave }: EditRoomDialog
       isSmokingAllowed: formData.isSmokingAllowed,
       foodPreference: formData.foodPreference,
       socialPreference: formData.socialPreference,
+      occupancyType: formData.occupancyType,
+      currentMembers: formData.occupancyType === 'Partially Occupied' ? parseInt(formData.currentMembers) || 0 : 0,
+      existingMembersPreferences: formData.existingMembersPreferences,
     };
 
     // Add leaseAmount if applicable
@@ -205,6 +211,84 @@ export default function EditRoomDialog({ room, onClose, onSave }: EditRoomDialog
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="bg-background border-grey300 min-h-[100px]"
               />
+            </div>
+
+            <div className="border-t border-grey200 pt-6">
+              <h3 className="font-heading text-lg text-foreground mb-4 uppercase tracking-wide">
+                Room Occupancy
+              </h3>
+
+              <div>
+                <Label htmlFor="edit-occupancyType" className="font-paragraph text-sm text-foreground mb-2 block">
+                  Room Occupancy Type *
+                </Label>
+                <Select 
+                  required
+                  value={formData.occupancyType} 
+                  onValueChange={(value) => setFormData({ ...formData, occupancyType: value })}
+                >
+                  <SelectTrigger id="edit-occupancyType" className="bg-background border-grey300">
+                    <SelectValue placeholder="Select occupancy type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Fully Vacant">Fully Vacant</SelectItem>
+                    <SelectItem value="Partially Occupied">Partially Occupied (Sharing Available)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {formData.occupancyType === 'Partially Occupied' && (
+                <div className="mt-6 space-y-6 p-6 bg-grey100 border border-grey300">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="edit-currentMembers" className="font-paragraph text-sm text-foreground mb-2 block">
+                        Current Members Present *
+                      </Label>
+                      <Select 
+                        required
+                        value={formData.currentMembers} 
+                        onValueChange={(value) => setFormData({ ...formData, currentMembers: value })}
+                      >
+                        <SelectTrigger id="edit-currentMembers" className="bg-background border-grey300">
+                          <SelectValue placeholder="Select number" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1</SelectItem>
+                          <SelectItem value="2">2</SelectItem>
+                          <SelectItem value="3">3</SelectItem>
+                          <SelectItem value="4">4</SelectItem>
+                          <SelectItem value="5">5</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="font-paragraph text-sm text-foreground mb-2 block">
+                        Available Slots
+                      </Label>
+                      <div className="bg-background border border-grey300 px-4 py-2 rounded font-paragraph text-base text-foreground">
+                        {formData.capacity && formData.currentMembers 
+                          ? Math.max(0, parseInt(formData.capacity) - parseInt(formData.currentMembers))
+                          : formData.capacity ? formData.capacity : 0}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="edit-existingMembersPreferences" className="font-paragraph text-sm text-foreground mb-2 block">
+                      Existing Members' Preferences (lifestyle tags)
+                    </Label>
+                    <Input
+                      id="edit-existingMembersPreferences"
+                      type="text"
+                      value={formData.existingMembersPreferences}
+                      onChange={(e) => setFormData({ ...formData, existingMembersPreferences: e.target.value })}
+                      className="bg-background border-grey300"
+                      placeholder="e.g., Quiet, Non-smoking, Vegetarian"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="border-t border-grey200 pt-6">

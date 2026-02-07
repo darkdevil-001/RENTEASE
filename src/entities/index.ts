@@ -4,6 +4,29 @@
  */
 
 /**
+ * Collection ID: groupexpenses
+ * Interface for GroupExpenses
+ */
+export interface GroupExpenses {
+  _id: string;
+  _createdDate?: Date;
+  _updatedDate?: Date;
+  /** @wixFieldType text */
+  title?: string;
+  /** @wixFieldType number */
+  totalAmount?: number;
+  /** @wixFieldType date */
+  expenseMonth?: Date | string;
+  /** @wixFieldType text */
+  groupId?: string;
+  /** @wixFieldType boolean */
+  isPaid?: boolean;
+  /** @wixFieldType datetime */
+  createdAt?: Date | string;
+}
+
+
+/**
  * Collection ID: roommategroups
  * Interface for RoommateGroups
  */
@@ -48,6 +71,12 @@ export interface Rooms {
   _updatedDate?: Date;
   /** @wixFieldType text */
   location?: string;
+  /** @wixFieldType text */
+  existingMembersPreferences?: string;
+  /** @wixFieldType number */
+  currentMembers?: number;
+  /** @wixFieldType text */
+  occupancyType?: string;
   /** @wixFieldType number */
   monthlyRent?: number;
   /** @wixFieldType text */

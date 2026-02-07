@@ -28,6 +28,9 @@ export default function ListRoomPage() {
     isSmokingAllowed: false,
     foodPreference: '',
     socialPreference: '',
+    occupancyType: 'Fully Vacant',
+    currentMembers: '',
+    existingMembersPreferences: '',
   });
 
   useEffect(() => {
@@ -56,6 +59,9 @@ export default function ListRoomPage() {
       foodPreference: formData.foodPreference,
       socialPreference: formData.socialPreference,
       ownerVerificationStatus: 'Not Verified',
+      occupancyType: formData.occupancyType,
+      currentMembers: formData.occupancyType === 'Partially Occupied' ? parseInt(formData.currentMembers) || 0 : 0,
+      existingMembersPreferences: formData.existingMembersPreferences,
     };
 
     // Add leaseAmount if applicable
@@ -235,6 +241,84 @@ export default function ListRoomPage() {
                     className="bg-background border-grey300 min-h-[120px]"
                     placeholder="Describe your room..."
                   />
+                </div>
+
+                <div className="border-t border-grey200 pt-8">
+                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                    Room Occupancy
+                  </h2>
+
+                  <div>
+                    <Label htmlFor="occupancyType" className="font-paragraph text-sm text-foreground mb-2 block">
+                      Room Occupancy Type *
+                    </Label>
+                    <Select 
+                      required
+                      value={formData.occupancyType} 
+                      onValueChange={(value) => setFormData({ ...formData, occupancyType: value })}
+                    >
+                      <SelectTrigger id="occupancyType" className="bg-background border-grey300">
+                        <SelectValue placeholder="Select occupancy type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Fully Vacant">Fully Vacant</SelectItem>
+                        <SelectItem value="Partially Occupied">Partially Occupied (Sharing Available)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {formData.occupancyType === 'Partially Occupied' && (
+                    <div className="mt-6 space-y-6 p-6 bg-grey100 border border-grey300">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <Label htmlFor="currentMembers" className="font-paragraph text-sm text-foreground mb-2 block">
+                            Current Members Present *
+                          </Label>
+                          <Select 
+                            required
+                            value={formData.currentMembers} 
+                            onValueChange={(value) => setFormData({ ...formData, currentMembers: value })}
+                          >
+                            <SelectTrigger id="currentMembers" className="bg-background border-grey300">
+                              <SelectValue placeholder="Select number" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">1</SelectItem>
+                              <SelectItem value="2">2</SelectItem>
+                              <SelectItem value="3">3</SelectItem>
+                              <SelectItem value="4">4</SelectItem>
+                              <SelectItem value="5">5</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <Label className="font-paragraph text-sm text-foreground mb-2 block">
+                            Available Slots
+                          </Label>
+                          <div className="bg-background border border-grey300 px-4 py-2 rounded font-paragraph text-base text-foreground">
+                            {formData.capacity && formData.currentMembers 
+                              ? Math.max(0, parseInt(formData.capacity) - parseInt(formData.currentMembers))
+                              : formData.capacity ? formData.capacity : 0}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="existingMembersPreferences" className="font-paragraph text-sm text-foreground mb-2 block">
+                          Existing Members' Preferences (lifestyle tags)
+                        </Label>
+                        <Input
+                          id="existingMembersPreferences"
+                          type="text"
+                          value={formData.existingMembersPreferences}
+                          onChange={(e) => setFormData({ ...formData, existingMembersPreferences: e.target.value })}
+                          className="bg-background border-grey300"
+                          placeholder="e.g., Quiet, Non-smoking, Vegetarian"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-t border-grey200 pt-8">
