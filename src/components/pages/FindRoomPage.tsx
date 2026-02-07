@@ -10,11 +10,13 @@ import { Image } from '@/components/ui/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
+import ContactOwnerDialog from '@/components/ContactOwnerDialog';
 
 export default function FindRoomPage() {
   const [rooms, setRooms] = useState<Rooms[]>([]);
   const [filteredRooms, setFilteredRooms] = useState<Rooms[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedRoomForContact, setSelectedRoomForContact] = useState<Rooms | null>(null);
   
   // Filter states
   const [location, setLocation] = useState('');
@@ -354,7 +356,7 @@ export default function FindRoomPage() {
                               </p>
                             )}
                           </div>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-2 mb-4">
                             {room.isStudentFriendly && (
                               <span className="font-paragraph text-xs text-foreground bg-grey100 px-3 py-1">
                                 Student Friendly
@@ -376,6 +378,16 @@ export default function FindRoomPage() {
                               </span>
                             )}
                           </div>
+                          <Button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedRoomForContact(room);
+                            }}
+                            variant="outline"
+                            className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                          >
+                            Contact Owner
+                          </Button>
                         </div>
                       </div>
                     </Link>
@@ -394,6 +406,13 @@ export default function FindRoomPage() {
       </main>
 
       <Footer />
+
+      {selectedRoomForContact && (
+        <ContactOwnerDialog
+          room={selectedRoomForContact}
+          onClose={() => setSelectedRoomForContact(null)}
+        />
+      )}
     </div>
   );
 }

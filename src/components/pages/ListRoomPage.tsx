@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { Image } from '@/components/ui/image';
+import { X } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -31,7 +33,12 @@ export default function ListRoomPage() {
     occupancyType: 'Fully Vacant',
     currentMembers: '',
     existingMembersPreferences: '',
+    ownerName: '',
+    ownerPhone: '',
+    ownerEmail: '',
   });
+  const [roomPhotos, setRoomPhotos] = useState<string[]>([]);
+  const [photoInput, setPhotoInput] = useState('');
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -62,6 +69,11 @@ export default function ListRoomPage() {
       occupancyType: formData.occupancyType,
       currentMembers: formData.occupancyType === 'Partially Occupied' ? parseInt(formData.currentMembers) || 0 : 0,
       existingMembersPreferences: formData.existingMembersPreferences,
+      ownerName: formData.ownerName,
+      ownerPhone: formData.ownerPhone,
+      ownerEmail: formData.ownerEmail,
+      additionalPhotos: roomPhotos.length > 0 ? roomPhotos[0] : undefined,
+      verificationStatus: 'Pending',
     };
 
     // Add leaseAmount if applicable
@@ -71,6 +83,17 @@ export default function ListRoomPage() {
 
     await BaseCrudService.create('rooms', newRoom);
     navigate('/owner-dashboard');
+  };
+
+  const handleAddPhoto = () => {
+    if (photoInput.trim() && roomPhotos.length < 5) {
+      setRoomPhotos([...roomPhotos, photoInput.trim()]);
+      setPhotoInput('');
+    }
+  };
+
+  const handleRemovePhoto = (index: number) => {
+    setRoomPhotos(roomPhotos.filter((_, i) => i !== index));
   };
 
   return (
@@ -319,6 +342,125 @@ export default function ListRoomPage() {
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className="border-t border-grey200 pt-8">
+                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                    Owner Contact Information
+                  </h2>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="ownerName" className="font-paragraph text-sm text-foreground mb-2 block">
+                        Your Name
+                      </Label>
+                      <Input
+                        id="ownerName"
+                        type="text"
+                        value={formData.ownerName}
+                        onChange={(e) => setFormData({ ...formData, ownerName: e.target.value })}
+                        className="bg-background border-grey300"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ownerPhone" className="font-paragraph text-sm text-foreground mb-2 block">
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="ownerPhone"
+                        type="tel"
+                        value={formData.ownerPhone}
+                        onChange={(e) => setFormData({ ...formData, ownerPhone: e.target.value })}
+                        className="bg-background border-grey300"
+                        placeholder="Enter your phone number"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <Label htmlFor="ownerEmail" className="font-paragraph text-sm text-foreground mb-2 block">
+                        Email Address
+                      </Label>
+                      <Input
+                        id="ownerEmail"
+                        type="email"
+                        value={formData.ownerEmail}
+                        onChange={(e) => setFormData({ ...formData, ownerEmail: e.target.value })}
+                        className="bg-background border-grey300"
+                        placeholder="Enter your email address"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-grey200 pt-8">
+                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                    Room Photos
+                  </h2>
+                  <p className="font-paragraph text-sm text-secondary mb-4">
+                    Add up to 5 room photos using image URLs (e.g., from Wix Media or other image hosting services)
+                  </p>
+
+                  <div className="space-y-4">
+                    <div className="flex gap-2">
+                      <Input
+                        type="text"
+                        value={photoInput}
+                        onChange={(e) => setPhotoInput(e.target.value)}
+                        className="bg-background border-grey300 flex-1"
+                        placeholder="Paste image URL here"
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleAddPhoto}
+                        disabled={roomPhotos.length >= 5}
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        Add Photo
+                      </Button>
+                    </div>
+
+                    {roomPhotos.length > 0 && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {roomPhotos.map((photo, index) => (
+                          <div key={index} className="relative group border border-grey300 aspect-square overflow-hidden">
+                            <Image
+                              src={photo}
+                              alt={`Room photo ${index + 1}`}
+                              className="w-full h-full object-cover"
+                              width={200}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePhoto(index)}
+                              className="absolute top-2 right-2 bg-destructive text-destructive-foreground p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {roomPhotos.length > 0 && (
+                      <p className="font-paragraph text-xs text-secondary">
+                        {roomPhotos.length} of 5 photos added
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="border-t border-grey200 pt-8">
+                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                    Verification (Optional)
+                  </h2>
+                  <p className="font-paragraph text-sm text-secondary mb-4">
+                    Add verification details to build trust with potential renters. You can update these later from your dashboard.
+                  </p>
+                  <p className="font-paragraph text-xs text-secondary italic">
+                    Note: Verification is optional and can be completed after listing your room.
+                  </p>
                 </div>
 
                 <div className="border-t border-grey200 pt-8">

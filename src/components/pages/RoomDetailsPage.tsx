@@ -8,11 +8,13 @@ import { Image } from '@/components/ui/image';
 import { ArrowLeft, MapPin, Calendar, DollarSign, Users, Home, CheckCircle, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ContactOwnerDialog from '@/components/ContactOwnerDialog';
 
 export default function RoomDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<Rooms | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showContactDialog, setShowContactDialog] = useState(false);
 
   useEffect(() => {
     loadRoom();
@@ -221,7 +223,10 @@ export default function RoomDetailsPage() {
                   </div>
                 </div>
 
-                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base">
+                <Button 
+                  onClick={() => setShowContactDialog(true)}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6 text-base"
+                >
                   Contact Owner
                 </Button>
               </div>
@@ -231,6 +236,13 @@ export default function RoomDetailsPage() {
       </main>
 
       <Footer />
+
+      {showContactDialog && room && (
+        <ContactOwnerDialog
+          room={room}
+          onClose={() => setShowContactDialog(false)}
+        />
+      )}
     </div>
   );
 }

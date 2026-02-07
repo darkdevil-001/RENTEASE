@@ -70,7 +70,23 @@ export interface Rooms {
   _createdDate?: Date;
   _updatedDate?: Date;
   /** @wixFieldType text */
+  verificationStatus?: string;
+  /** @wixFieldType text */
   location?: string;
+  /** @wixFieldType boolean */
+  hasRentalAgreement?: boolean;
+  /** @wixFieldType boolean */
+  hasOwnershipAgreement?: boolean;
+  /** @wixFieldType text */
+  identityNumber?: string;
+  /** @wixFieldType image - Contains image URL, render with <Image> component, NOT as text */
+  additionalPhotos?: string;
+  /** @wixFieldType text */
+  ownerEmail?: string;
+  /** @wixFieldType text */
+  ownerPhone?: string;
+  /** @wixFieldType text */
+  ownerName?: string;
   /** @wixFieldType text */
   existingMembersPreferences?: string;
   /** @wixFieldType number */
