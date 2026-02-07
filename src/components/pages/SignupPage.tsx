@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useMember } from '@/integrations';
 import { BaseCrudService } from '@/integrations';
 import { UserProfiles } from '@/entities';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import Footer from '@/components/Footer';
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const { isAuthenticated, actions } = useMember();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -23,6 +25,15 @@ export default function SignupPage() {
     minBudget: '',
     maxBudget: '',
   });
+
+  useEffect(() => {
+    // If already authenticated, redirect to the stored path or home
+    if (isAuthenticated) {
+      const redirectPath = localStorage.getItem('redirectAfterLogin') || '/';
+      localStorage.removeItem('redirectAfterLogin');
+      navigate(redirectPath);
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +53,10 @@ export default function SignupPage() {
     };
 
     await BaseCrudService.create('users', newUser);
-    navigate('/');
+    // Store the redirect path before signup
+    localStorage.setItem('redirectAfterLogin', '/');
+    // Trigger Wix signup
+    actions.login();
   };
 
   return (

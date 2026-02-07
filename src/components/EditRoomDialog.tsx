@@ -17,6 +17,7 @@ export default function EditRoomDialog({ room, onClose, onSave }: EditRoomDialog
   const [formData, setFormData] = useState({
     location: room.location || '',
     monthlyRent: room.monthlyRent?.toString() || '',
+    leaseAmount: room.leaseAmount?.toString() || '',
     roomType: room.roomType || '',
     capacity: room.capacity?.toString() || '',
     availabilityDate: room.availabilityDate ? new Date(room.availabilityDate).toISOString().split('T')[0] : '',
@@ -31,7 +32,7 @@ export default function EditRoomDialog({ room, onClose, onSave }: EditRoomDialog
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const updatedRoom: Rooms = {
+    const updatedRoom: any = {
       ...room,
       location: formData.location,
       monthlyRent: parseFloat(formData.monthlyRent),
@@ -45,6 +46,13 @@ export default function EditRoomDialog({ room, onClose, onSave }: EditRoomDialog
       foodPreference: formData.foodPreference,
       socialPreference: formData.socialPreference,
     };
+
+    // Add leaseAmount if applicable
+    if ((formData.leaseOption === 'Lease only' || formData.leaseOption === 'Rent + Lease') && formData.leaseAmount) {
+      updatedRoom.leaseAmount = parseFloat(formData.leaseAmount);
+    } else {
+      updatedRoom.leaseAmount = undefined;
+    }
 
     onSave(updatedRoom);
   };
@@ -170,6 +178,22 @@ export default function EditRoomDialog({ room, onClose, onSave }: EditRoomDialog
                 </SelectContent>
               </Select>
             </div>
+
+            {(formData.leaseOption === 'Lease only' || formData.leaseOption === 'Rent + Lease') && (
+              <div>
+                <Label htmlFor="edit-leaseAmount" className="font-paragraph text-sm text-foreground mb-2 block">
+                  Lease Amount ($)
+                </Label>
+                <Input
+                  id="edit-leaseAmount"
+                  type="number"
+                  value={formData.leaseAmount}
+                  onChange={(e) => setFormData({ ...formData, leaseAmount: e.target.value })}
+                  className="bg-background border-grey300"
+                  placeholder="Enter lease amount"
+                />
+              </div>
+            )}
 
             <div>
               <Label htmlFor="edit-description" className="font-paragraph text-sm text-foreground mb-2 block">

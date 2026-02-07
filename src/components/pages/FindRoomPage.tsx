@@ -26,6 +26,7 @@ export default function FindRoomPage() {
   const [isSmokingAllowed, setIsSmokingAllowed] = useState('');
   const [foodPreference, setFoodPreference] = useState('');
   const [socialPreference, setSocialPreference] = useState('');
+  const [paymentType, setPaymentType] = useState('');
 
   useEffect(() => {
     loadRooms();
@@ -33,7 +34,7 @@ export default function FindRoomPage() {
 
   useEffect(() => {
     applyFilters();
-  }, [rooms, location, minBudget, maxBudget, roomType, capacity, isStudentFriendly, isSmokingAllowed, foodPreference, socialPreference]);
+  }, [rooms, location, minBudget, maxBudget, roomType, capacity, isStudentFriendly, isSmokingAllowed, foodPreference, socialPreference, paymentType]);
 
   const loadRooms = async () => {
     setIsLoading(true);
@@ -92,6 +93,19 @@ export default function FindRoomPage() {
       filtered = filtered.filter(room => room.socialPreference === socialPreference);
     }
 
+    if (paymentType) {
+      filtered = filtered.filter(room => {
+        if (paymentType === 'Rent Only') {
+          return room.leaseOption === 'Rent only';
+        } else if (paymentType === 'Lease Only') {
+          return room.leaseOption === 'Lease only';
+        } else if (paymentType === 'Rent + Lease') {
+          return room.leaseOption === 'Rent + Lease';
+        }
+        return true;
+      });
+    }
+
     setFilteredRooms(filtered);
   };
 
@@ -105,6 +119,7 @@ export default function FindRoomPage() {
     setIsSmokingAllowed('');
     setFoodPreference('');
     setSocialPreference('');
+    setPaymentType('');
   };
 
   return (
@@ -167,6 +182,22 @@ export default function FindRoomPage() {
                   onChange={(e) => setMaxBudget(e.target.value)}
                   className="bg-background border-grey300"
                 />
+              </div>
+
+              <div>
+                <Label htmlFor="paymentType" className="font-paragraph text-sm text-foreground mb-2 block">
+                  Payment Type
+                </Label>
+                <Select value={paymentType} onValueChange={setPaymentType}>
+                  <SelectTrigger id="paymentType" className="bg-background border-grey300">
+                    <SelectValue placeholder="Select payment type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Rent Only">Rent Only</SelectItem>
+                    <SelectItem value="Lease Only">Lease Only</SelectItem>
+                    <SelectItem value="Rent + Lease">Rent + Lease</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
@@ -313,9 +344,16 @@ export default function FindRoomPage() {
                           <p className="font-paragraph text-base text-secondary mb-4">
                             {room.roomType} • {room.capacity} {room.capacity === 1 ? 'Person' : 'People'}
                           </p>
-                          <p className="font-heading text-2xl text-primary mb-4">
-                            ${room.monthlyRent}/month
-                          </p>
+                          <div className="mb-4">
+                            <p className="font-heading text-2xl text-primary mb-2">
+                              ${room.monthlyRent}/month
+                            </p>
+                            {room.leaseAmount && (room.leaseOption === 'Lease only' || room.leaseOption === 'Rent + Lease') && (
+                              <p className="font-paragraph text-base text-secondary">
+                                Lease: ${room.leaseAmount}
+                              </p>
+                            )}
+                          </div>
                           <div className="flex flex-wrap gap-2">
                             {room.isStudentFriendly && (
                               <span className="font-paragraph text-xs text-foreground bg-grey100 px-3 py-1">

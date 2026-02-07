@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
+import { useMember } from '@/integrations';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function Header() {
+  const { member, isAuthenticated, isLoading, actions } = useMember();
+
   return (
     <header className="w-full border-b border-grey200 bg-background">
       <div className="max-w-[100rem] mx-auto px-8 py-6">
@@ -20,22 +24,43 @@ export default function Header() {
             <Link to="/roommate-groups" className="font-paragraph text-base text-foreground hover:text-primary transition-colors">
               Roommate Groups
             </Link>
-            <Link to="/owner-dashboard" className="font-paragraph text-base text-foreground hover:text-primary transition-colors">
-              Dashboard
-            </Link>
+            {isAuthenticated && (
+              <Link to="/owner-dashboard" className="font-paragraph text-base text-foreground hover:text-primary transition-colors">
+                Dashboard
+              </Link>
+            )}
           </nav>
           
           <div className="flex items-center gap-4">
-            <Link to="/login">
-              <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                Login
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                Sign Up
-              </Button>
-            </Link>
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : isAuthenticated ? (
+              <>
+                <span className="font-paragraph text-base text-foreground">
+                  {member?.profile?.nickname || member?.contact?.firstName || 'User'}
+                </span>
+                <Button 
+                  onClick={actions.logout}
+                  variant="outline" 
+                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

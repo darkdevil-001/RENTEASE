@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useMember } from '@/integrations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,14 +9,27 @@ import Footer from '@/components/Footer';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { isAuthenticated, actions } = useMember();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
+  useEffect(() => {
+    // If already authenticated, redirect to the stored path or home
+    if (isAuthenticated) {
+      const redirectPath = localStorage.getItem('redirectAfterLogin') || '/';
+      localStorage.removeItem('redirectAfterLogin');
+      navigate(redirectPath);
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/');
+    // Store the redirect path before login
+    localStorage.setItem('redirectAfterLogin', '/');
+    // Trigger Wix login
+    actions.login();
   };
 
   return (

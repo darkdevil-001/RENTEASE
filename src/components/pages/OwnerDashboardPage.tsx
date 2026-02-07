@@ -4,16 +4,18 @@ import { BaseCrudService } from '@/integrations';
 import { Rooms } from '@/entities';
 import { Button } from '@/components/ui/button';
 import { Image } from '@/components/ui/image';
-import { Pencil, Trash2, Plus } from 'lucide-react';
+import { Pencil, Trash2, Plus, CheckCircle, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import EditRoomDialog from '@/components/EditRoomDialog';
+import VerificationDialog from '@/components/VerificationDialog';
 
 export default function OwnerDashboardPage() {
   const [rooms, setRooms] = useState<Rooms[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingRoom, setEditingRoom] = useState<Rooms | null>(null);
+  const [verifyingRoom, setVerifyingRoom] = useState<Rooms | null>(null);
 
   useEffect(() => {
     loadRooms();
@@ -37,6 +39,12 @@ export default function OwnerDashboardPage() {
     setRooms(rooms.map(room => room._id === updatedRoom._id ? updatedRoom : room));
     await BaseCrudService.update('rooms', updatedRoom);
     setEditingRoom(null);
+  };
+
+  const handleVerification = async (updatedRoom: Rooms) => {
+    setRooms(rooms.map(room => room._id === updatedRoom._id ? updatedRoom : room));
+    await BaseCrudService.update('rooms', updatedRoom);
+    setVerifyingRoom(null);
   };
 
   return (
@@ -95,9 +103,44 @@ export default function OwnerDashboardPage() {
                       <p className="font-paragraph text-base text-secondary mb-4">
                         {room.roomType} • {room.capacity} {room.capacity === 1 ? 'Person' : 'People'}
                       </p>
-                      <p className="font-heading text-2xl text-primary mb-6">
-                        ${room.monthlyRent}/month
-                      </p>
+                      <div className="mb-4">
+                        <p className="font-heading text-2xl text-primary mb-2">
+                          ${room.monthlyRent}/month
+                        </p>
+                        {room.leaseAmount && (room.leaseOption === 'Lease only' || room.leaseOption === 'Rent + Lease') && (
+                          <p className="font-paragraph text-base text-secondary">
+                            Lease: ${room.leaseAmount}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Verification Status */}
+                      <div className="mb-4 p-3 bg-grey100 border border-grey300">
+                        <div className="flex items-center gap-2 mb-2">
+                          {room.ownerVerificationStatus === 'Verified' ? (
+                            <>
+                              <CheckCircle className="w-4 h-4 text-primary" />
+                              <span className="font-paragraph text-sm text-primary font-semibold">
+                                Verified (Format Checked)
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <AlertCircle className="w-4 h-4 text-secondary" />
+                              <span className="font-paragraph text-sm text-secondary">
+                                Not Verified
+                              </span>
+                            </>
+                          )}
+                        </div>
+                        <Button
+                          onClick={() => setVerifyingRoom(room)}
+                          variant="outline"
+                          className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground text-xs py-2"
+                        >
+                          {room.ownerVerificationStatus === 'Verified' ? 'Update Verification' : 'Verify Now'}
+                        </Button>
+                      </div>
                       
                       <div className="flex gap-2">
                         <Button
@@ -146,6 +189,14 @@ export default function OwnerDashboardPage() {
           room={editingRoom}
           onClose={() => setEditingRoom(null)}
           onSave={handleUpdate}
+        />
+      )}
+
+      {verifyingRoom && (
+        <VerificationDialog
+          room={verifyingRoom}
+          onClose={() => setVerifyingRoom(null)}
+          onSave={handleVerification}
         />
       )}
 

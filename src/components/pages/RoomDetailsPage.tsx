@@ -5,7 +5,7 @@ import { Rooms } from '@/entities';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Image } from '@/components/ui/image';
-import { ArrowLeft, MapPin, Calendar, DollarSign, Users, Home } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, DollarSign, Users, Home, CheckCircle, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -86,6 +86,12 @@ export default function RoomDetailsPage() {
                   <p className="font-heading text-4xl text-primary mb-8">
                     ${room.monthlyRent}/month
                   </p>
+
+                  {room.leaseAmount && (room.leaseOption === 'Lease only' || room.leaseOption === 'Rent + Lease') && (
+                    <p className="font-paragraph text-lg text-secondary mb-8">
+                      Lease Amount: ${room.leaseAmount}
+                    </p>
+                  )}
 
                   <div className="grid grid-cols-2 gap-6 mb-8">
                     <div className="flex items-start gap-3">
@@ -177,6 +183,40 @@ export default function RoomDetailsPage() {
                       <span className="font-paragraph text-sm text-foreground bg-grey100 px-4 py-2 border border-grey300">
                         {room.socialPreference}
                       </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Verification Status */}
+                <div className="border-t border-grey200 pt-8 mb-8">
+                  <h2 className="font-heading text-xl text-foreground mb-4 uppercase tracking-wide">
+                    Owner Verification
+                  </h2>
+                  <div className="p-4 bg-grey100 border border-grey300 flex items-start gap-3">
+                    {room.ownerVerificationStatus === 'Verified' ? (
+                      <>
+                        <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-paragraph font-semibold text-primary">
+                            Verified (Format Checked)
+                          </p>
+                          <p className="font-paragraph text-sm text-secondary mt-1">
+                            This owner has been verified and is a trusted seller.
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-paragraph font-semibold text-secondary">
+                            Not Verified
+                          </p>
+                          <p className="font-paragraph text-sm text-secondary mt-1">
+                            This owner has not completed identity verification yet.
+                          </p>
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
