@@ -16,6 +16,8 @@ export const setTheme = (theme: Theme) => {
   } else {
     document.documentElement.classList.remove('dark');
   }
+  // Dispatch custom event for other components to listen
+  window.dispatchEvent(new Event('themechange'));
 };
 
 export const toggleTheme = (): Theme => {

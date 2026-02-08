@@ -7,21 +7,61 @@
 /* Dark mode styles */
 :root.dark {
   color-scheme: dark;
-}
-
-:root.dark {
   --foreground: #ffffff;
   --background: #1c1c1e;
-  --secondary: #8e8e93;
+  --secondary: #a1a1a6;
   --primary: #007aff;
-  --grey100: #2c2c2e;
-  --grey200: #3a3a3c;
-  --grey300: #636366;
-  --grey400: #8e8e93;
-  --grey500: #a1a1a6;
-  --grey600: #c7c7cc;
-  --grey700: #d1d1d6;
-  --grey800: #e5e5ea;
-  --grey900: #f2f2f7;
+  --grey100: #f2f2f7;
+  --grey200: #e5e5ea;
+  --grey300: #d1d1d6;
+  --grey400: #c7c7cc;
+  --grey500: #8e8e93;
+  --grey600: #636366;
+  --grey700: #3a3a3c;
+  --grey800: #2c2c2e;
+  --grey900: #1c1c1e;
+}
+
+/* Apply dark mode to all form elements */
+:root.dark input,
+:root.dark textarea,
+:root.dark select,
+:root.dark [role="combobox"] {
+  background-color: #2c2c2e;
+  border-color: #636366;
+  color: #f2f2f7;
+}
+
+:root.dark input::placeholder,
+:root.dark textarea::placeholder {
+  color: #8e8e93;
+}
+
+/* Calendar icon visibility */
+:root.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: brightness(0.7);
+}
+
+:root.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1);
+}
+
+/* Select dropdown styling for dark mode */
+:root.dark .bg-background {
+  background-color: #1c1c1e;
+}
+
+:root.dark .border-grey300 {
+  border-color: #636366;
+}
+
+:root.dark .text-foreground {
+  color: #f2f2f7;
 }
 

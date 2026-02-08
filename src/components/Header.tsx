@@ -17,6 +17,14 @@ export default function Header() {
   useEffect(() => {
     setThemeState(getTheme());
     setLanguageState(getLanguage());
+    
+    // Listen for theme changes from other components
+    const handleThemeChange = () => {
+      setThemeState(getTheme());
+    };
+    
+    window.addEventListener('themechange', handleThemeChange);
+    return () => window.removeEventListener('themechange', handleThemeChange);
   }, []);
 
   const handleThemeToggle = () => {
@@ -33,7 +41,7 @@ export default function Header() {
     <header className={`w-full border-b ${theme === 'dark' ? 'border-grey800 bg-grey900' : 'border-grey200 bg-background'}`}>
       <div className="max-w-[100rem] mx-auto px-8 py-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="font-heading text-2xl text-foreground uppercase tracking-wide">
+          <Link to="/" className={`font-heading text-2xl uppercase tracking-wide ${theme === 'dark' ? 'text-grey100' : 'text-foreground'}`}>
             RentEase
           </Link>
           

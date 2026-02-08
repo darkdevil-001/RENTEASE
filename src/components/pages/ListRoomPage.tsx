@@ -13,10 +13,12 @@ import { Image } from '@/components/ui/image';
 import { X } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { getTheme } from '@/lib/theme';
 
 export default function ListRoomPage() {
   const navigate = useNavigate();
   const { member, isAuthenticated, isLoading: authLoading, actions } = useMember();
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [formData, setFormData] = useState({
     location: '',
     monthlyRent: '',
@@ -42,6 +44,7 @@ export default function ListRoomPage() {
   const [fileInputRef, setFileInputRef] = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
+    setTheme(getTheme());
     if (!authLoading && !isAuthenticated) {
       // Store the redirect path
       localStorage.setItem('redirectAfterLogin', '/list-room');
@@ -122,7 +125,7 @@ export default function ListRoomPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-grey900' : 'bg-background'}`}>
       <Header />
       
       <main className="flex-1">
@@ -133,27 +136,27 @@ export default function ListRoomPage() {
         ) : !isAuthenticated ? (
           <section className="w-full max-w-[100rem] mx-auto px-8 py-16 flex justify-center items-center min-h-[600px]">
             <div className="text-center">
-              <h2 className="font-heading text-3xl text-foreground mb-4 uppercase tracking-wide">
+              <h2 className={`font-heading text-3xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-4 uppercase tracking-wide`}>
                 Sign In Required
               </h2>
-              <p className="font-paragraph text-lg text-secondary mb-8">
+              <p className={`font-paragraph text-lg ${theme === 'dark' ? 'text-grey400' : 'text-secondary'} mb-8`}>
                 Please sign in to list a room
               </p>
             </div>
           </section>
         ) : (
           <section className="w-full max-w-[100rem] mx-auto px-8 py-16">
-            <h1 className="font-heading text-5xl md:text-6xl text-foreground mb-4 uppercase tracking-tight">
+            <h1 className={`font-heading text-5xl md:text-6xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-4 uppercase tracking-tight`}>
               List Your Room
             </h1>
-            <p className="font-paragraph text-lg text-secondary mb-12">
+            <p className={`font-paragraph text-lg ${theme === 'dark' ? 'text-grey400' : 'text-secondary'} mb-12`}>
               Fill in the details to list your available room
             </p>
 
             <form onSubmit={handleSubmit} className="max-w-[56rem]">
               <div className="space-y-8">
                 <div>
-                  <Label htmlFor="location" className="font-paragraph text-sm text-foreground mb-2 block">
+                  <Label htmlFor="location" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                     Location *
                   </Label>
                   <Input
@@ -162,14 +165,14 @@ export default function ListRoomPage() {
                     required
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    className="bg-background border-grey300"
+                    className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                     placeholder="Enter location"
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="roomType" className="font-paragraph text-sm text-foreground mb-2 block">
+                    <Label htmlFor="roomType" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                       Room Type *
                     </Label>
                     <Select 
@@ -177,7 +180,7 @@ export default function ListRoomPage() {
                       value={formData.roomType} 
                       onValueChange={(value) => setFormData({ ...formData, roomType: value })}
                     >
-                      <SelectTrigger id="roomType" className="bg-background border-grey300">
+                      <SelectTrigger id="roomType" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -188,7 +191,7 @@ export default function ListRoomPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="capacity" className="font-paragraph text-sm text-foreground mb-2 block">
+                    <Label htmlFor="capacity" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                       Capacity *
                     </Label>
                     <Select 
@@ -196,7 +199,7 @@ export default function ListRoomPage() {
                       value={formData.capacity} 
                       onValueChange={(value) => setFormData({ ...formData, capacity: value })}
                     >
-                      <SelectTrigger id="capacity" className="bg-background border-grey300">
+                      <SelectTrigger id="capacity" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                         <SelectValue placeholder="Select capacity" />
                       </SelectTrigger>
                       <SelectContent>
@@ -213,7 +216,7 @@ export default function ListRoomPage() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="monthlyRent" className="font-paragraph text-sm text-foreground mb-2 block">
+                    <Label htmlFor="monthlyRent" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                       Monthly Rent ($) *
                     </Label>
                     <Input
@@ -222,13 +225,13 @@ export default function ListRoomPage() {
                       required
                       value={formData.monthlyRent}
                       onChange={(e) => setFormData({ ...formData, monthlyRent: e.target.value })}
-                      className="bg-background border-grey300"
+                      className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                       placeholder="Enter monthly rent"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="availabilityDate" className="font-paragraph text-sm text-foreground mb-2 block">
+                    <Label htmlFor="availabilityDate" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                       Availability Date *
                     </Label>
                     <Input
@@ -237,13 +240,13 @@ export default function ListRoomPage() {
                       required
                       value={formData.availabilityDate}
                       onChange={(e) => setFormData({ ...formData, availabilityDate: e.target.value })}
-                      className="bg-background border-grey300"
+                      className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="leaseOption" className="font-paragraph text-sm text-foreground mb-2 block">
+                  <Label htmlFor="leaseOption" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                     Lease Option *
                   </Label>
                   <Select 
@@ -251,7 +254,7 @@ export default function ListRoomPage() {
                     value={formData.leaseOption} 
                     onValueChange={(value) => setFormData({ ...formData, leaseOption: value })}
                   >
-                    <SelectTrigger id="leaseOption" className="bg-background border-grey300">
+                    <SelectTrigger id="leaseOption" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                       <SelectValue placeholder="Select lease option" />
                     </SelectTrigger>
                     <SelectContent>
@@ -264,7 +267,7 @@ export default function ListRoomPage() {
 
                 {(formData.leaseOption === 'Lease only' || formData.leaseOption === 'Rent + Lease') && (
                   <div>
-                    <Label htmlFor="leaseAmount" className="font-paragraph text-sm text-foreground mb-2 block">
+                    <Label htmlFor="leaseAmount" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                       Lease Amount ($)
                     </Label>
                     <Input
@@ -272,32 +275,32 @@ export default function ListRoomPage() {
                       type="number"
                       value={formData.leaseAmount}
                       onChange={(e) => setFormData({ ...formData, leaseAmount: e.target.value })}
-                      className="bg-background border-grey300"
+                      className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                       placeholder="Enter lease amount"
                     />
                   </div>
                 )}
 
                 <div>
-                  <Label htmlFor="description" className="font-paragraph text-sm text-foreground mb-2 block">
+                  <Label htmlFor="description" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                     Description
                   </Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="bg-background border-grey300 min-h-[120px]"
+                    className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'} min-h-[120px]`}
                     placeholder="Describe your room..."
                   />
                 </div>
 
-                <div className="border-t border-grey200 pt-8">
-                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                <div className={`border-t ${theme === 'dark' ? 'border-grey700' : 'border-grey200'} pt-8`}>
+                  <h2 className={`font-heading text-xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-6 uppercase tracking-wide`}>
                     Room Occupancy
                   </h2>
 
                   <div>
-                    <Label htmlFor="occupancyType" className="font-paragraph text-sm text-foreground mb-2 block">
+                    <Label htmlFor="occupancyType" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                       Room Occupancy Type *
                     </Label>
                     <Select 
@@ -305,7 +308,7 @@ export default function ListRoomPage() {
                       value={formData.occupancyType} 
                       onValueChange={(value) => setFormData({ ...formData, occupancyType: value })}
                     >
-                      <SelectTrigger id="occupancyType" className="bg-background border-grey300">
+                      <SelectTrigger id="occupancyType" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                         <SelectValue placeholder="Select occupancy type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -316,10 +319,10 @@ export default function ListRoomPage() {
                   </div>
 
                   {formData.occupancyType === 'Partially Occupied' && (
-                    <div className="mt-6 space-y-6 p-6 bg-grey100 border border-grey300">
+                    <div className={`mt-6 space-y-6 p-6 ${theme === 'dark' ? 'bg-grey800 border-grey700' : 'bg-grey100 border-grey300'} border`}>
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                          <Label htmlFor="currentMembers" className="font-paragraph text-sm text-foreground mb-2 block">
+                          <Label htmlFor="currentMembers" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                             Current Members Present *
                           </Label>
                           <Select 
@@ -327,7 +330,7 @@ export default function ListRoomPage() {
                             value={formData.currentMembers} 
                             onValueChange={(value) => setFormData({ ...formData, currentMembers: value })}
                           >
-                            <SelectTrigger id="currentMembers" className="bg-background border-grey300">
+                            <SelectTrigger id="currentMembers" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                               <SelectValue placeholder="Select number" />
                             </SelectTrigger>
                             <SelectContent>
@@ -341,10 +344,10 @@ export default function ListRoomPage() {
                         </div>
 
                         <div>
-                          <Label className="font-paragraph text-sm text-foreground mb-2 block">
+                          <Label className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                             Available Slots
                           </Label>
-                          <div className="bg-background border border-grey300 px-4 py-2 rounded font-paragraph text-base text-foreground">
+                          <div className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'} border px-4 py-2 rounded font-paragraph text-base`}>
                             {formData.capacity && formData.currentMembers 
                               ? Math.max(0, parseInt(formData.capacity) - parseInt(formData.currentMembers))
                               : formData.capacity ? formData.capacity : 0}
@@ -353,7 +356,7 @@ export default function ListRoomPage() {
                       </div>
 
                       <div>
-                        <Label htmlFor="existingMembersPreferences" className="font-paragraph text-sm text-foreground mb-2 block">
+                        <Label htmlFor="existingMembersPreferences" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                           Existing Members' Preferences (lifestyle tags)
                         </Label>
                         <Input
@@ -361,7 +364,7 @@ export default function ListRoomPage() {
                           type="text"
                           value={formData.existingMembersPreferences}
                           onChange={(e) => setFormData({ ...formData, existingMembersPreferences: e.target.value })}
-                          className="bg-background border-grey300"
+                          className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                           placeholder="e.g., Quiet, Non-smoking, Vegetarian"
                         />
                       </div>
@@ -369,14 +372,14 @@ export default function ListRoomPage() {
                   )}
                 </div>
 
-                <div className="border-t border-grey200 pt-8">
-                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                <div className={`border-t ${theme === 'dark' ? 'border-grey700' : 'border-grey200'} pt-8`}>
+                  <h2 className={`font-heading text-xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-6 uppercase tracking-wide`}>
                     Owner Contact Information
                   </h2>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <Label htmlFor="ownerName" className="font-paragraph text-sm text-foreground mb-2 block">
+                      <Label htmlFor="ownerName" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                         Your Name
                       </Label>
                       <Input
@@ -384,13 +387,13 @@ export default function ListRoomPage() {
                         type="text"
                         value={formData.ownerName}
                         onChange={(e) => setFormData({ ...formData, ownerName: e.target.value })}
-                        className="bg-background border-grey300"
+                        className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                         placeholder="Enter your full name"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="ownerPhone" className="font-paragraph text-sm text-foreground mb-2 block">
+                      <Label htmlFor="ownerPhone" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                         Phone Number
                       </Label>
                       <Input
@@ -398,13 +401,13 @@ export default function ListRoomPage() {
                         type="tel"
                         value={formData.ownerPhone}
                         onChange={(e) => setFormData({ ...formData, ownerPhone: e.target.value })}
-                        className="bg-background border-grey300"
+                        className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                         placeholder="Enter your phone number"
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <Label htmlFor="ownerEmail" className="font-paragraph text-sm text-foreground mb-2 block">
+                      <Label htmlFor="ownerEmail" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                         Email Address
                       </Label>
                       <Input
@@ -412,18 +415,18 @@ export default function ListRoomPage() {
                         type="email"
                         value={formData.ownerEmail}
                         onChange={(e) => setFormData({ ...formData, ownerEmail: e.target.value })}
-                        className="bg-background border-grey300"
+                        className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                         placeholder="Enter your email address"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-grey200 pt-8">
-                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                <div className={`border-t ${theme === 'dark' ? 'border-grey700' : 'border-grey200'} pt-8`}>
+                  <h2 className={`font-heading text-xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-6 uppercase tracking-wide`}>
                     Room Photos
                   </h2>
-                  <p className="font-paragraph text-sm text-secondary mb-4">
+                  <p className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey400' : 'text-secondary'} mb-4`}>
                     Add up to 5 room photos using image URLs or upload from your device
                   </p>
 
@@ -433,7 +436,7 @@ export default function ListRoomPage() {
                         type="text"
                         value={photoInput}
                         onChange={(e) => setPhotoInput(e.target.value)}
-                        className="bg-background border-grey300 flex-1"
+                        className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'} flex-1`}
                         placeholder="Paste image URL here"
                       />
                       <Button
@@ -471,7 +474,7 @@ export default function ListRoomPage() {
                     {roomPhotos.length > 0 && (
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {roomPhotos.map((photo, index) => (
-                          <div key={index} className="relative group border border-grey300 aspect-square overflow-hidden">
+                          <div key={index} className={`relative group border ${theme === 'dark' ? 'border-grey700' : 'border-grey300'} aspect-square overflow-hidden`}>
                             <Image
                               src={photo}
                               alt={`Room photo ${index + 1}`}
@@ -491,33 +494,33 @@ export default function ListRoomPage() {
                     )}
 
                     {roomPhotos.length > 0 && (
-                      <p className="font-paragraph text-xs text-secondary">
+                      <p className={`font-paragraph text-xs ${theme === 'dark' ? 'text-grey400' : 'text-secondary'}`}>
                         {roomPhotos.length} of 5 photos added
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="border-t border-grey200 pt-8">
-                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                <div className={`border-t ${theme === 'dark' ? 'border-grey700' : 'border-grey200'} pt-8`}>
+                  <h2 className={`font-heading text-xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-6 uppercase tracking-wide`}>
                     Verification (Optional)
                   </h2>
-                  <p className="font-paragraph text-sm text-secondary mb-4">
+                  <p className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey400' : 'text-secondary'} mb-4`}>
                     Add verification details to build trust with potential renters. You can update these later from your dashboard.
                   </p>
-                  <p className="font-paragraph text-xs text-secondary italic">
+                  <p className={`font-paragraph text-xs ${theme === 'dark' ? 'text-grey400' : 'text-secondary'} italic`}>
                     Note: Verification is optional and can be completed after listing your room.
                   </p>
                 </div>
 
-                <div className="border-t border-grey200 pt-8">
-                  <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+                <div className={`border-t ${theme === 'dark' ? 'border-grey700' : 'border-grey200'} pt-8`}>
+                  <h2 className={`font-heading text-xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-6 uppercase tracking-wide`}>
                     Preferences
                   </h2>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <Label className="font-paragraph text-sm text-foreground mb-3 block">
+                      <Label className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-3 block`}>
                         Student Friendly
                       </Label>
                       <div className="flex gap-4">
@@ -529,7 +532,7 @@ export default function ListRoomPage() {
                             onChange={() => setFormData({ ...formData, isStudentFriendly: true })}
                             className="w-4 h-4"
                           />
-                          <span className="font-paragraph text-sm text-foreground">Yes</span>
+                          <span className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'}`}>Yes</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
@@ -539,13 +542,13 @@ export default function ListRoomPage() {
                             onChange={() => setFormData({ ...formData, isStudentFriendly: false })}
                             className="w-4 h-4"
                           />
-                          <span className="font-paragraph text-sm text-foreground">No</span>
+                          <span className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'}`}>No</span>
                         </label>
                       </div>
                     </div>
 
                     <div>
-                      <Label className="font-paragraph text-sm text-foreground mb-3 block">
+                      <Label className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-3 block`}>
                         Smoking Allowed
                       </Label>
                       <div className="flex gap-4">
@@ -557,7 +560,7 @@ export default function ListRoomPage() {
                             onChange={() => setFormData({ ...formData, isSmokingAllowed: true })}
                             className="w-4 h-4"
                           />
-                          <span className="font-paragraph text-sm text-foreground">Yes</span>
+                          <span className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'}`}>Yes</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
@@ -567,20 +570,20 @@ export default function ListRoomPage() {
                             onChange={() => setFormData({ ...formData, isSmokingAllowed: false })}
                             className="w-4 h-4"
                           />
-                          <span className="font-paragraph text-sm text-foreground">No</span>
+                          <span className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'}`}>No</span>
                         </label>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="foodPreference" className="font-paragraph text-sm text-foreground mb-2 block">
+                      <Label htmlFor="foodPreference" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                         Food Preference
                       </Label>
                       <Select 
                         value={formData.foodPreference} 
                         onValueChange={(value) => setFormData({ ...formData, foodPreference: value })}
                       >
-                        <SelectTrigger id="foodPreference" className="bg-background border-grey300">
+                        <SelectTrigger id="foodPreference" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                           <SelectValue placeholder="Select preference" />
                         </SelectTrigger>
                         <SelectContent>
@@ -593,14 +596,14 @@ export default function ListRoomPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="socialPreference" className="font-paragraph text-sm text-foreground mb-2 block">
+                      <Label htmlFor="socialPreference" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                         Social Preference
                       </Label>
                       <Select 
                         value={formData.socialPreference} 
                         onValueChange={(value) => setFormData({ ...formData, socialPreference: value })}
                       >
-                        <SelectTrigger id="socialPreference" className="bg-background border-grey300">
+                        <SelectTrigger id="socialPreference" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                           <SelectValue placeholder="Select preference" />
                         </SelectTrigger>
                         <SelectContent>
@@ -623,7 +626,7 @@ export default function ListRoomPage() {
                     type="button"
                     variant="outline"
                     onClick={() => navigate('/')}
-                    className="border-grey400 text-foreground hover:bg-grey100 px-8 py-6 text-base"
+                    className={`${theme === 'dark' ? 'border-grey600 text-grey200 hover:bg-grey800' : 'border-grey400 text-foreground hover:bg-grey100'} px-8 py-6 text-base`}
                   >
                     Cancel
                   </Button>

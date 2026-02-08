@@ -36,6 +36,14 @@ export default function FindRoomPage() {
   useEffect(() => {
     setTheme(getTheme());
     loadRooms();
+    
+    // Listen for theme changes
+    const handleThemeChange = () => {
+      setTheme(getTheme());
+    };
+    
+    window.addEventListener('themechange', handleThemeChange);
+    return () => window.removeEventListener('themechange', handleThemeChange);
   }, []);
 
   useEffect(() => {
