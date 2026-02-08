@@ -64,7 +64,7 @@ export default function ListRoomPage() {
       availabilityDate: formData.availabilityDate,
       leaseOption: formData.leaseOption,
       description: formData.description,
-      roomImage: 'https://static.wixstatic.com/media/c60ce8_2501be6a26784d67b8f4f8ee82274476~mv2.png?originWidth=768&originHeight=576',
+      roomImage: roomPhotos.length > 0 ? roomPhotos[0] : 'https://static.wixstatic.com/media/c60ce8_2501be6a26784d67b8f4f8ee82274476~mv2.png?originWidth=768&originHeight=576',
       isStudentFriendly: formData.isStudentFriendly,
       isSmokingAllowed: formData.isSmokingAllowed,
       foodPreference: formData.foodPreference,
@@ -76,7 +76,7 @@ export default function ListRoomPage() {
       ownerName: formData.ownerName,
       ownerPhone: formData.ownerPhone,
       ownerEmail: formData.ownerEmail,
-      additionalPhotos: roomPhotos.length > 0 ? roomPhotos[0] : undefined,
+      additionalPhotos: roomPhotos.length > 1 ? roomPhotos[1] : undefined,
       verificationStatus: 'Pending',
     };
 
@@ -99,14 +99,19 @@ export default function ListRoomPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
+      const filesToProcess = Math.min(files.length, 5 - roomPhotos.length);
+      let loadedCount = 0;
       const newPhotos: string[] = [];
-      for (let i = 0; i < files.length && roomPhotos.length + newPhotos.length < 5; i++) {
+
+      for (let i = 0; i < filesToProcess; i++) {
         const file = files[i];
         const reader = new FileReader();
         reader.onload = (event) => {
           if (event.target?.result) {
             newPhotos.push(event.target.result as string);
-            if (newPhotos.length === Math.min(files.length, 5 - roomPhotos.length)) {
+            loadedCount++;
+            // When all files are loaded, update state
+            if (loadedCount === filesToProcess) {
               setRoomPhotos([...roomPhotos, ...newPhotos]);
             }
           }

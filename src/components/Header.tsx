@@ -12,7 +12,7 @@ export default function Header() {
   const { member, isAuthenticated, isLoading, actions } = useMember();
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [theme, setThemeState] = useState<'light' | 'dark'>('light');
-  const [language, setLanguageState] = useState<'en' | 'es'>('en');
+  const [language, setLanguageState] = useState<'en' | 'ta'>('en');
 
   useEffect(() => {
     setThemeState(getTheme());
@@ -23,8 +23,17 @@ export default function Header() {
       setThemeState(getTheme());
     };
     
+    // Listen for language changes from other components
+    const handleLanguageChange = () => {
+      setLanguageState(getLanguage());
+    };
+    
     window.addEventListener('themechange', handleThemeChange);
-    return () => window.removeEventListener('themechange', handleThemeChange);
+    window.addEventListener('languagechange', handleLanguageChange);
+    return () => {
+      window.removeEventListener('themechange', handleThemeChange);
+      window.removeEventListener('languagechange', handleLanguageChange);
+    };
   }, []);
 
   const handleThemeToggle = () => {
@@ -67,7 +76,7 @@ export default function Header() {
             <button
               onClick={handleLanguageToggle}
               className={`p-2 rounded transition-colors ${theme === 'dark' ? 'hover:bg-grey800' : 'hover:bg-grey100'}`}
-              title={language === 'en' ? 'Switch to Spanish' : 'Switch to English'}
+              title={language === 'en' ? 'Switch to Tamil' : 'Switch to English'}
             >
               <Globe className="w-5 h-5" />
             </button>

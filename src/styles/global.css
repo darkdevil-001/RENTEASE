@@ -4,10 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light mode - default */
+:root {
+  color-scheme: light;
+  --foreground: #000000;
+  --background: #ffffff;
+  --secondary: #8e8e93;
+  --primary: #007aff;
+  --grey100: #f2f2f7;
+  --grey200: #e5e5ea;
+  --grey300: #d1d1d6;
+  --grey400: #c7c7cc;
+  --grey500: #8e8e93;
+  --grey600: #636366;
+  --grey700: #3a3a3c;
+  --grey800: #2c2c2e;
+  --grey900: #1c1c1e;
+}
+
 /* Dark mode styles */
 :root.dark {
   color-scheme: dark;
-  --foreground: #ffffff;
+  --foreground: #f2f2f7;
   --background: #1c1c1e;
   --secondary: #a1a1a6;
   --primary: #007aff;
@@ -20,6 +38,21 @@
   --grey700: #3a3a3c;
   --grey800: #2c2c2e;
   --grey900: #1c1c1e;
+}
+
+/* Light mode form elements */
+input,
+textarea,
+select,
+[role="combobox"] {
+  background-color: #ffffff;
+  border-color: #d1d1d6;
+  color: #000000;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #8e8e93;
 }
 
 /* Apply dark mode to all form elements */
@@ -38,11 +71,6 @@
 }
 
 /* Calendar icon visibility */
-:root.dark input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-  cursor: pointer;
-}
-
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   filter: brightness(0.7);
@@ -50,6 +78,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 :root.dark input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1) brightness(1);
+  cursor: pointer;
 }
 
 /* Select dropdown styling for dark mode */
@@ -63,5 +92,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 :root.dark .text-foreground {
   color: #f2f2f7;
+}
+
+:root.dark .text-secondary {
+  color: #a1a1a6;
+}
+
+/* Light mode text colors */
+:root .text-foreground {
+  color: #000000;
+}
+
+:root .text-secondary {
+  color: #8e8e93;
 }
 

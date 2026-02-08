@@ -11,10 +11,13 @@ export const getTheme = (): Theme => {
 
 export const setTheme = (theme: Theme) => {
   localStorage.setItem('theme', theme);
+  // Remove both classes first to ensure clean state
+  document.documentElement.classList.remove('dark', 'light');
+  // Add the appropriate class
   if (theme === 'dark') {
     document.documentElement.classList.add('dark');
   } else {
-    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
   }
   // Dispatch custom event for other components to listen
   window.dispatchEvent(new Event('themechange'));
