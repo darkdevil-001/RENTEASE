@@ -32,6 +32,7 @@ export default function ListRoomPage() {
     isSmokingAllowed: false,
     foodPreference: '',
     socialPreference: '',
+    genderPreference: '',
     occupancyType: 'Fully Vacant',
     currentMembers: '',
     existingMembersPreferences: '',
@@ -46,7 +47,6 @@ export default function ListRoomPage() {
   useEffect(() => {
     setTheme(getTheme());
     if (!authLoading && !isAuthenticated) {
-      // Store the redirect path
       localStorage.setItem('redirectAfterLogin', '/list-room');
       actions.login();
     }
@@ -69,6 +69,7 @@ export default function ListRoomPage() {
       isSmokingAllowed: formData.isSmokingAllowed,
       foodPreference: formData.foodPreference,
       socialPreference: formData.socialPreference,
+      genderPreference: formData.genderPreference,
       ownerVerificationStatus: 'Not Verified',
       occupancyType: formData.occupancyType,
       currentMembers: formData.occupancyType === 'Partially Occupied' ? parseInt(formData.currentMembers) || 0 : 0,
@@ -80,7 +81,6 @@ export default function ListRoomPage() {
       verificationStatus: 'Pending',
     };
 
-    // Add leaseAmount if applicable
     if ((formData.leaseOption === 'Lease only' || formData.leaseOption === 'Rent + Lease') && formData.leaseAmount) {
       newRoom.leaseAmount = parseFloat(formData.leaseAmount);
     }
@@ -110,7 +110,6 @@ export default function ListRoomPage() {
           if (event.target?.result) {
             newPhotos.push(event.target.result as string);
             loadedCount++;
-            // When all files are loaded, update state
             if (loadedCount === filesToProcess) {
               setRoomPhotos([...roomPhotos, ...newPhotos]);
             }
@@ -119,7 +118,6 @@ export default function ListRoomPage() {
         reader.readAsDataURL(file);
       }
     }
-    // Reset file input
     if (fileInputRef) {
       fileInputRef.value = '';
     }
@@ -222,7 +220,7 @@ export default function ListRoomPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="monthlyRent" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
-                      Monthly Rent ($) *
+                      Monthly Rent (₹) *
                     </Label>
                     <Input
                       id="monthlyRent"
@@ -273,7 +271,7 @@ export default function ListRoomPage() {
                 {(formData.leaseOption === 'Lease only' || formData.leaseOption === 'Rent + Lease') && (
                   <div>
                     <Label htmlFor="leaseAmount" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
-                      Lease Amount ($)
+                      Lease Amount (₹)
                     </Label>
                     <Input
                       id="leaseAmount"
@@ -614,6 +612,25 @@ export default function ListRoomPage() {
                         <SelectContent>
                           <SelectItem value="Quiet">Quiet</SelectItem>
                           <SelectItem value="Social">Social</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="genderPreference" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
+                        Gender Preference
+                      </Label>
+                      <Select 
+                        value={formData.genderPreference} 
+                        onValueChange={(value) => setFormData({ ...formData, genderPreference: value })}
+                      >
+                        <SelectTrigger id="genderPreference" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
+                          <SelectValue placeholder="Select preference" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Any">Any</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

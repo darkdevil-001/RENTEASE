@@ -11,14 +11,12 @@ export const getTheme = (): Theme => {
 
 export const setTheme = (theme: Theme) => {
   localStorage.setItem('theme', theme);
-  // Remove both classes first to ensure clean state
+  // Update document element with theme class
+  document.documentElement.setAttribute('data-theme', theme);
   document.documentElement.classList.remove('dark', 'light');
-  // Add the appropriate class
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.add('light');
-  }
+  document.documentElement.classList.add(theme);
+  // Force a repaint to ensure smooth transition
+  document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
   // Dispatch custom event for other components to listen
   window.dispatchEvent(new Event('themechange'));
 };
@@ -33,5 +31,7 @@ export const toggleTheme = (): Theme => {
 // Initialize theme on app load
 export const initializeTheme = () => {
   const theme = getTheme();
-  setTheme(theme);
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.classList.add(theme);
+  window.dispatchEvent(new Event('themechange'));
 };

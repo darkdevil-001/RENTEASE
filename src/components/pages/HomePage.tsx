@@ -82,7 +82,7 @@ export default function HomePage() {
                   </h1>
                 </RevealText>
                 <RevealText delay={0.1}>
-                  <p className={`font-paragraph text-xl md:text-2xl ${theme === 'dark' ? 'text-grey400' : 'text-grey600'} max-w-2xl leading-relaxed`}>
+                  <p className={`font-paragraph text-xl md:text-2xl ${theme === 'dark' ? 'text-grey300' : 'text-foreground'} max-w-2xl leading-relaxed`}>
                     The Zen of living together. A preference-based sanctuary for finding rooms and roommates with absolute clarity.
                   </p>
                 </RevealText>
