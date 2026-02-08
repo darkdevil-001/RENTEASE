@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { X } from 'lucide-react';
+import { getTheme } from '@/lib/theme';
 
 interface ProfileUpdateDialogProps {
   onClose: () => void;
@@ -11,6 +12,7 @@ interface ProfileUpdateDialogProps {
 
 export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProps) {
   const { member } = useMember();
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [formData, setFormData] = useState({
     firstName: '',
     email: '',
@@ -21,6 +23,10 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
   });
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    setTheme(getTheme());
+  }, []);
 
   useEffect(() => {
     if (member) {
@@ -63,18 +69,18 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
   };
 
   return (
-    <div className="fixed inset-0 bg-foreground/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-background max-w-[56rem] w-full border border-grey300">
-        <div className="bg-background border-b border-grey200 p-6 flex items-center justify-between">
+    <div className={`fixed inset-0 ${theme === 'dark' ? 'bg-grey900/50' : 'bg-foreground/50'} flex items-center justify-center z-50 p-4 overflow-y-auto`}>
+      <div className={`${theme === 'dark' ? 'bg-grey900 border-grey800' : 'bg-background border-grey300'} max-w-[56rem] w-full border my-8`}>
+        <div className={`${theme === 'dark' ? 'bg-grey900 border-grey800' : 'bg-background border-grey200'} border-b p-6 flex items-center justify-between`}>
           <h2 className="font-heading text-2xl text-foreground uppercase tracking-wide">
             Update Profile
           </h2>
-          <button onClick={onClose} className="text-secondary hover:text-foreground">
+          <button onClick={onClose} className={`${theme === 'dark' ? 'text-grey500 hover:text-grey200' : 'text-secondary hover:text-foreground'}`}>
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
           <div className="space-y-6">
             <div>
               <Label htmlFor="firstName" className="font-paragraph text-sm text-foreground mb-2 block">
@@ -85,11 +91,11 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                className="bg-background border-grey300"
+                className={`${theme === 'dark' ? 'bg-grey800 border-grey700' : 'bg-background border-grey300'}`}
                 placeholder="Enter your first name"
                 disabled
               />
-              <p className="font-paragraph text-xs text-secondary mt-1">
+              <p className={`font-paragraph text-xs ${theme === 'dark' ? 'text-grey500' : 'text-secondary'} mt-1`}>
                 Managed by Wix Members
               </p>
             </div>
@@ -103,11 +109,11 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="bg-background border-grey300"
+                className={`${theme === 'dark' ? 'bg-grey800 border-grey700' : 'bg-background border-grey300'}`}
                 placeholder="Enter your email"
                 disabled
               />
-              <p className="font-paragraph text-xs text-secondary mt-1">
+              <p className={`font-paragraph text-xs ${theme === 'dark' ? 'text-grey500' : 'text-secondary'} mt-1`}>
                 Managed by Wix Members
               </p>
             </div>
@@ -121,16 +127,16 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
                 type="tel"
                 value={formData.phoneNumber}
                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                className="bg-background border-grey300"
+                className={`${theme === 'dark' ? 'bg-grey800 border-grey700' : 'bg-background border-grey300'}`}
                 placeholder="Enter your phone number"
                 disabled
               />
-              <p className="font-paragraph text-xs text-secondary mt-1">
+              <p className={`font-paragraph text-xs ${theme === 'dark' ? 'text-grey500' : 'text-secondary'} mt-1`}>
                 Managed by Wix Members
               </p>
             </div>
 
-            <div className="border-t border-grey200 pt-6">
+            <div className={`border-t ${theme === 'dark' ? 'border-grey800' : 'border-grey200'} pt-6`}>
               <h3 className="font-heading text-lg text-foreground mb-4 uppercase tracking-wide">
                 Basic Preferences
               </h3>
@@ -144,7 +150,7 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
                     id="smokingPreference"
                     value={formData.smokingPreference}
                     onChange={(e) => setFormData({ ...formData, smokingPreference: e.target.value })}
-                    className="w-full bg-background border border-grey300 px-4 py-2 font-paragraph text-base text-foreground"
+                    className={`w-full ${theme === 'dark' ? 'bg-grey800 border-grey700 text-grey200' : 'bg-background border-grey300 text-foreground'} border px-4 py-2 font-paragraph text-base`}
                   >
                     <option value="">Select preference</option>
                     <option value="Smoker">Smoker</option>
@@ -161,7 +167,7 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
                     id="foodPreference"
                     value={formData.foodPreference}
                     onChange={(e) => setFormData({ ...formData, foodPreference: e.target.value })}
-                    className="w-full bg-background border border-grey300 px-4 py-2 font-paragraph text-base text-foreground"
+                    className={`w-full ${theme === 'dark' ? 'bg-grey800 border-grey700 text-grey200' : 'bg-background border-grey300 text-foreground'} border px-4 py-2 font-paragraph text-base`}
                   >
                     <option value="">Select preference</option>
                     <option value="Vegetarian">Vegetarian</option>
@@ -179,7 +185,7 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
                     id="socialHabits"
                     value={formData.socialHabits}
                     onChange={(e) => setFormData({ ...formData, socialHabits: e.target.value })}
-                    className="w-full bg-background border border-grey300 px-4 py-2 font-paragraph text-base text-foreground"
+                    className={`w-full ${theme === 'dark' ? 'bg-grey800 border-grey700 text-grey200' : 'bg-background border-grey300 text-foreground'} border px-4 py-2 font-paragraph text-base`}
                   >
                     <option value="">Select preference</option>
                     <option value="Quiet">Quiet</option>
@@ -191,12 +197,12 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
             </div>
 
             {message && (
-              <div className={`p-4 text-center font-paragraph text-sm ${message.includes('successfully') ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
+              <div className={`p-4 text-center font-paragraph text-sm ${message.includes('successfully') ? `${theme === 'dark' ? 'bg-primary/20 text-primary' : 'bg-primary/10 text-primary'}` : `${theme === 'dark' ? 'bg-destructive/20 text-destructive' : 'bg-destructive/10 text-destructive'}`}`}>
                 {message}
               </div>
             )}
 
-            <div className="flex gap-4 pt-6 border-t border-grey200">
+            <div className={`flex gap-4 pt-6 border-t ${theme === 'dark' ? 'border-grey800' : 'border-grey200'}`}>
               <Button 
                 type="submit"
                 disabled={isSaving}
@@ -208,7 +214,7 @@ export default function ProfileUpdateDialog({ onClose }: ProfileUpdateDialogProp
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                className="flex-1 border-grey400 text-foreground hover:bg-grey100"
+                className={`flex-1 ${theme === 'dark' ? 'border-grey700 text-grey200 hover:bg-grey800' : 'border-grey400 text-foreground hover:bg-grey100'}`}
               >
                 Cancel
               </Button>

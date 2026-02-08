@@ -2,15 +2,35 @@ import { Link } from 'react-router-dom';
 import { useMember } from '@/integrations';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProfileUpdateDialog from '@/components/ProfileUpdateDialog';
+import { Moon, Sun, Globe } from 'lucide-react';
+import { getTheme, setTheme, toggleTheme } from '@/lib/theme';
+import { getLanguage, toggleLanguage } from '@/lib/language';
 
 export default function Header() {
   const { member, isAuthenticated, isLoading, actions } = useMember();
   const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [theme, setThemeState] = useState<'light' | 'dark'>('light');
+  const [language, setLanguageState] = useState<'en' | 'es'>('en');
+
+  useEffect(() => {
+    setThemeState(getTheme());
+    setLanguageState(getLanguage());
+  }, []);
+
+  const handleThemeToggle = () => {
+    const newTheme = toggleTheme();
+    setThemeState(newTheme);
+  };
+
+  const handleLanguageToggle = () => {
+    const newLang = toggleLanguage();
+    setLanguageState(newLang);
+  };
 
   return (
-    <header className="w-full border-b border-grey200 bg-background">
+    <header className={`w-full border-b ${theme === 'dark' ? 'border-grey800 bg-grey900' : 'border-grey200 bg-background'}`}>
       <div className="max-w-[100rem] mx-auto px-8 py-6">
         <div className="flex items-center justify-between">
           <Link to="/" className="font-heading text-2xl text-foreground uppercase tracking-wide">
@@ -18,30 +38,52 @@ export default function Header() {
           </Link>
           
           <nav className="hidden md:flex items-center gap-8">
-            <Link to="/find-room" className="font-paragraph text-base text-foreground hover:text-primary transition-colors">
+            <Link to="/find-room" className={`font-paragraph text-base ${theme === 'dark' ? 'text-grey200 hover:text-primary' : 'text-foreground hover:text-primary'} transition-colors`}>
               Find a Room
             </Link>
-            <Link to="/list-room" className="font-paragraph text-base text-foreground hover:text-primary transition-colors">
+            <Link to="/list-room" className={`font-paragraph text-base ${theme === 'dark' ? 'text-grey200 hover:text-primary' : 'text-foreground hover:text-primary'} transition-colors`}>
               List a Room
             </Link>
-            <Link to="/roommate-groups" className="font-paragraph text-base text-foreground hover:text-primary transition-colors">
+            <Link to="/roommate-groups" className={`font-paragraph text-base ${theme === 'dark' ? 'text-grey200 hover:text-primary' : 'text-foreground hover:text-primary'} transition-colors`}>
               Roommate Groups
             </Link>
             {isAuthenticated && (
-              <Link to="/owner-dashboard" className="font-paragraph text-base text-foreground hover:text-primary transition-colors">
+              <Link to="/owner-dashboard" className={`font-paragraph text-base ${theme === 'dark' ? 'text-grey200 hover:text-primary' : 'text-foreground hover:text-primary'} transition-colors`}>
                 Dashboard
               </Link>
             )}
           </nav>
           
           <div className="flex items-center gap-4">
+            {/* Language Toggle */}
+            <button
+              onClick={handleLanguageToggle}
+              className={`p-2 rounded transition-colors ${theme === 'dark' ? 'hover:bg-grey800' : 'hover:bg-grey100'}`}
+              title={language === 'en' ? 'Switch to Spanish' : 'Switch to English'}
+            >
+              <Globe className="w-5 h-5" />
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={handleThemeToggle}
+              className={`p-2 rounded transition-colors ${theme === 'dark' ? 'hover:bg-grey800' : 'hover:bg-grey100'}`}
+              title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+            >
+              {theme === 'light' ? (
+                <Moon className="w-5 h-5" />
+              ) : (
+                <Sun className="w-5 h-5" />
+              )}
+            </button>
+
             {isLoading ? (
               <LoadingSpinner />
             ) : isAuthenticated ? (
               <>
                 <button 
                   onClick={() => setShowProfileDialog(true)}
-                  className="font-paragraph text-base text-foreground hover:text-primary transition-colors cursor-pointer"
+                  className={`font-paragraph text-base ${theme === 'dark' ? 'text-grey200 hover:text-primary' : 'text-foreground hover:text-primary'} transition-colors cursor-pointer`}
                 >
                   {member?.profile?.nickname || member?.contact?.firstName || 'User'}
                 </button>

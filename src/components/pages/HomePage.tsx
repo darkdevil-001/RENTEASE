@@ -7,24 +7,25 @@ import { Image } from '@/components/ui/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { getTheme } from '@/lib/theme';
 
 // --- Utility Components ---
 
-const GridLines = () => (
-  <div className="absolute inset-0 pointer-events-none z-0 flex justify-between select-none overflow-hidden">
-    <div className="w-px h-full bg-grey200/50" />
-    <div className="w-px h-full bg-grey200/50 hidden md:block" />
-    <div className="w-px h-full bg-grey200/50 hidden lg:block" />
-    <div className="w-px h-full bg-grey200/50" />
+const GridLines = ({ theme }: { theme: 'light' | 'dark' }) => (
+  <div className={`absolute inset-0 pointer-events-none z-0 flex justify-between select-none overflow-hidden`}>
+    <div className={`w-px h-full ${theme === 'dark' ? 'bg-grey700/50' : 'bg-grey200/50'}`} />
+    <div className={`w-px h-full ${theme === 'dark' ? 'bg-grey700/50' : 'bg-grey200/50'} hidden md:block`} />
+    <div className={`w-px h-full ${theme === 'dark' ? 'bg-grey700/50' : 'bg-grey200/50'} hidden lg:block`} />
+    <div className={`w-px h-full ${theme === 'dark' ? 'bg-grey700/50' : 'bg-grey200/50'}`} />
   </div>
 );
 
-const SectionLabel = ({ number, text }: { number: string; text: string }) => (
+const SectionLabel = ({ number, text, theme }: { number: string; text: string; theme: 'light' | 'dark' }) => (
   <div className="flex items-center gap-4 mb-8 md:mb-0">
     <span className="font-heading text-xs font-bold text-primary border border-primary px-2 py-1 rounded-full">
       {number}
     </span>
-    <span className="font-heading text-xs uppercase tracking-widest text-grey500">
+    <span className={`font-heading text-xs uppercase tracking-widest ${theme === 'dark' ? 'text-grey500' : 'text-grey500'}`}>
       {text}
     </span>
   </div>
@@ -50,33 +51,38 @@ const RevealText = ({ children, delay = 0 }: { children: React.ReactNode; delay?
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
+  useEffect(() => {
+    setTheme(getTheme());
+  }, []);
+
   const yParallax = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const scaleParallax = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-background text-foreground font-paragraph selection:bg-primary/10 selection:text-primary overflow-clip">
+    <div ref={containerRef} className={`min-h-screen ${theme === 'dark' ? 'bg-grey900 text-grey100' : 'bg-background text-foreground'} font-paragraph selection:bg-primary/10 selection:text-primary overflow-clip`}>
       <Header />
 
       <main className="relative w-full">
         {/* --- HERO SECTION --- */}
-        <section className="relative w-full min-h-screen flex flex-col pt-32 pb-12 px-6 md:px-12 border-b border-grey200">
-          <GridLines />
+        <section className={`relative w-full min-h-screen flex flex-col pt-32 pb-12 px-6 md:px-12 border-b ${theme === 'dark' ? 'border-grey800' : 'border-grey200'}`}>
+          <GridLines theme={theme} />
           
           <div className="relative z-10 flex-1 flex flex-col justify-center max-w-[120rem] mx-auto w-full">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-24">
               <div className="lg:col-span-8">
                 <RevealText>
                   <h1 className="font-heading text-7xl md:text-9xl font-bold tracking-tighter leading-[0.9] uppercase mb-6">
-                    Rent<span className="text-grey300">Ease</span>
+                    Rent<span className={theme === 'dark' ? 'text-grey500' : 'text-grey300'}>Ease</span>
                   </h1>
                 </RevealText>
                 <RevealText delay={0.1}>
-                  <p className="font-paragraph text-xl md:text-2xl text-grey600 max-w-2xl leading-relaxed">
+                  <p className={`font-paragraph text-xl md:text-2xl ${theme === 'dark' ? 'text-grey400' : 'text-grey600'} max-w-2xl leading-relaxed`}>
                     The Zen of living together. A preference-based sanctuary for finding rooms and roommates with absolute clarity.
                   </p>
                 </RevealText>
@@ -87,7 +93,7 @@ export default function HomePage() {
                       <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
                       System Operational
                     </div>
-                    <p className="text-grey400 text-sm text-right hidden lg:block">
+                    <p className={`text-sm text-right hidden lg:block ${theme === 'dark' ? 'text-grey500' : 'text-grey400'}`}>
                       v1.0.4 — Trust Layers Active
                     </p>
                  </RevealText>
@@ -104,35 +110,35 @@ export default function HomePage() {
                   width={1920}
                 />
               </motion.div>
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+              <div className={`absolute inset-0 bg-gradient-to-t ${theme === 'dark' ? 'from-grey900/80' : 'from-background/80'} to-transparent`} />
               
               {/* Floating Action Cards */}
               <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
                 <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
                   <Link to="/find-room" className="group/card">
-                    <div className="bg-background/90 backdrop-blur-md border border-grey200 p-8 hover:border-primary transition-all duration-300 h-full flex flex-col justify-between relative overflow-hidden">
+                    <div className={`${theme === 'dark' ? 'bg-grey800/90 border-grey700' : 'bg-background/90 border-grey200'} backdrop-blur-md border p-8 hover:border-primary transition-all duration-300 h-full flex flex-col justify-between relative overflow-hidden`}>
                       <div className="absolute top-0 left-0 w-1 h-full bg-primary transform -translate-y-full group-hover/card:translate-y-0 transition-transform duration-300" />
                       <div>
-                        <Search className="w-8 h-8 text-foreground mb-4 group-hover/card:text-primary transition-colors" />
+                        <Search className={`w-8 h-8 ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-4 group-hover/card:text-primary transition-colors`} />
                         <h3 className="font-heading text-2xl uppercase tracking-tight mb-2">Find a Room</h3>
-                        <p className="text-grey500 text-sm">Search based on lifestyle, budget, and compatibility.</p>
+                        <p className={`${theme === 'dark' ? 'text-grey400' : 'text-grey500'} text-sm`}>Search based on lifestyle, budget, and compatibility.</p>
                       </div>
                       <div className="mt-8 flex justify-end">
-                        <MoveRight className="w-6 h-6 text-grey300 group-hover/card:text-primary transition-colors transform group-hover/card:translate-x-2 duration-300" />
+                        <MoveRight className={`w-6 h-6 ${theme === 'dark' ? 'text-grey600' : 'text-grey300'} group-hover/card:text-primary transition-colors transform group-hover/card:translate-x-2 duration-300`} />
                       </div>
                     </div>
                   </Link>
 
                   <Link to="/list-room" className="group/card">
-                    <div className="bg-background/90 backdrop-blur-md border border-grey200 p-8 hover:border-primary transition-all duration-300 h-full flex flex-col justify-between relative overflow-hidden">
+                    <div className={`${theme === 'dark' ? 'bg-grey800/90 border-grey700' : 'bg-background/90 border-grey200'} backdrop-blur-md border p-8 hover:border-primary transition-all duration-300 h-full flex flex-col justify-between relative overflow-hidden`}>
                       <div className="absolute top-0 left-0 w-1 h-full bg-primary transform -translate-y-full group-hover/card:translate-y-0 transition-transform duration-300" />
                       <div>
-                        <Home className="w-8 h-8 text-foreground mb-4 group-hover/card:text-primary transition-colors" />
+                        <Home className={`w-8 h-8 ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-4 group-hover/card:text-primary transition-colors`} />
                         <h3 className="font-heading text-2xl uppercase tracking-tight mb-2">List a Room</h3>
-                        <p className="text-grey500 text-sm">Post your space. Manage applicants. Find the perfect tenant.</p>
+                        <p className={`${theme === 'dark' ? 'text-grey400' : 'text-grey500'} text-sm`}>Post your space. Manage applicants. Find the perfect tenant.</p>
                       </div>
                       <div className="mt-8 flex justify-end">
-                        <MoveRight className="w-6 h-6 text-grey300 group-hover/card:text-primary transition-colors transform group-hover/card:translate-x-2 duration-300" />
+                        <MoveRight className={`w-6 h-6 ${theme === 'dark' ? 'text-grey600' : 'text-grey300'} group-hover/card:text-primary transition-colors transform group-hover/card:translate-x-2 duration-300`} />
                       </div>
                     </div>
                   </Link>
@@ -143,18 +149,18 @@ export default function HomePage() {
         </section>
 
         {/* --- PHILOSOPHY / FEATURES SCROLL --- */}
-        <section className="relative w-full py-32 px-6 md:px-12 border-b border-grey200 bg-grey100/30">
-          <GridLines />
+        <section className={`relative w-full py-32 px-6 md:px-12 border-b ${theme === 'dark' ? 'border-grey800 bg-grey800/30' : 'border-grey200 bg-grey100/30'}`}>
+          <GridLines theme={theme} />
           <div className="max-w-[120rem] mx-auto relative z-10">
             
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
               {/* Sticky Sidebar */}
               <div className="lg:col-span-4 h-fit lg:sticky lg:top-32 mb-16 lg:mb-0">
-                <SectionLabel number="01" text="Core Principles" />
-                <h2 className="font-heading text-5xl md:text-6xl font-bold uppercase tracking-tight mb-8 text-foreground">
-                  Designed for <br/><span className="text-grey400">Harmony.</span>
+                <SectionLabel number="01" text="Core Principles" theme={theme} />
+                <h2 className={`font-heading text-5xl md:text-6xl font-bold uppercase tracking-tight mb-8 ${theme === 'dark' ? 'text-grey100' : 'text-foreground'}`}>
+                  Designed for <br/><span className={theme === 'dark' ? 'text-grey600' : 'text-grey400'}>Harmony.</span>
                 </h2>
-                <p className="text-lg text-grey600 max-w-md mb-8">
+                <p className={`text-lg ${theme === 'dark' ? 'text-grey400' : 'text-grey600'} max-w-md mb-8`}>
                   We believe finding a home is about more than just square footage. It's about the rhythm of daily life, shared values, and mutual respect.
                 </p>
                 <div className="hidden lg:block w-12 h-1 bg-primary" />
@@ -167,22 +173,22 @@ export default function HomePage() {
                 <div className="group relative">
                   <div className="grid md:grid-cols-2 gap-8 items-center">
                     <div className="order-2 md:order-1">
-                      <div className="mb-6 inline-flex items-center justify-center w-12 h-12 rounded-full bg-white border border-grey200 shadow-sm">
+                      <div className={`mb-6 inline-flex items-center justify-center w-12 h-12 rounded-full ${theme === 'dark' ? 'bg-grey800 border-grey700' : 'bg-white border-grey200'} border shadow-sm`}>
                         <Users className="w-5 h-5 text-primary" />
                       </div>
-                      <h3 className="font-heading text-3xl uppercase tracking-wide mb-4">Preference Matching</h3>
-                      <p className="text-grey600 leading-relaxed mb-6">
+                      <h3 className={`font-heading text-3xl uppercase tracking-wide mb-4 ${theme === 'dark' ? 'text-grey100' : 'text-foreground'}`}>Preference Matching</h3>
+                      <p className={`${theme === 'dark' ? 'text-grey400' : 'text-grey600'} leading-relaxed mb-6`}>
                         Our algorithm doesn't just match locations; it matches lifestyles. Filter by sleep schedules, social habits, and cleanliness standards to find someone who truly fits your rhythm.
                       </p>
                       <ul className="space-y-3">
                         {['Lifestyle Compatibility', 'Budget Alignment', 'Habit Synchronization'].map((item, i) => (
-                          <li key={i} className="flex items-center gap-3 text-sm font-medium text-grey800">
+                          <li key={i} className={`flex items-center gap-3 text-sm font-medium ${theme === 'dark' ? 'text-grey300' : 'text-grey800'}`}>
                             <CheckCircle2 className="w-4 h-4 text-primary" /> {item}
                           </li>
                         ))}
                       </ul>
                     </div>
-                    <div className="order-1 md:order-2 relative h-[400px] overflow-hidden rounded-sm border border-grey200">
+                    <div className={`order-1 md:order-2 relative h-[400px] overflow-hidden rounded-sm border ${theme === 'dark' ? 'border-grey700' : 'border-grey200'}`}>
                       <Image 
                         src="https://static.wixstatic.com/media/c60ce8_0a05d5b9ccd440ea888bf39cae418b15~mv2.png?originWidth=640&originHeight=384" 
                         alt="Abstract representation of matching"
@@ -196,7 +202,7 @@ export default function HomePage() {
                 {/* Feature 2: Group Sharing */}
                 <div className="group relative">
                   <div className="grid md:grid-cols-2 gap-8 items-center">
-                    <div className="relative h-[400px] overflow-hidden rounded-sm border border-grey200">
+                    <div className={`relative h-[400px] overflow-hidden rounded-sm border ${theme === 'dark' ? 'border-grey700' : 'border-grey200'}`}>
                        <Image 
                         src="https://static.wixstatic.com/media/c60ce8_4639faaca0f844e2a5260c7e80ff58ac~mv2.png?originWidth=640&originHeight=384" 
                         alt="Group living concept"
@@ -205,14 +211,14 @@ export default function HomePage() {
                       <div className="absolute inset-0 bg-grey900/10" />
                     </div>
                     <div>
-                      <div className="mb-6 inline-flex items-center justify-center w-12 h-12 rounded-full bg-white border border-grey200 shadow-sm">
+                      <div className={`mb-6 inline-flex items-center justify-center w-12 h-12 rounded-full ${theme === 'dark' ? 'bg-grey800 border-grey700' : 'bg-white border-grey200'} border shadow-sm`}>
                         <Users className="w-5 h-5 text-primary" />
                       </div>
-                      <h3 className="font-heading text-3xl uppercase tracking-wide mb-4">Group Sharing</h3>
-                      <p className="text-grey600 leading-relaxed mb-6">
+                      <h3 className={`font-heading text-3xl uppercase tracking-wide mb-4 ${theme === 'dark' ? 'text-grey100' : 'text-foreground'}`}>Group Sharing</h3>
+                      <p className={`${theme === 'dark' ? 'text-grey400' : 'text-grey600'} leading-relaxed mb-6`}>
                         Form a collective. Join or create roommate groups for 2-6 members. We facilitate the formation of micro-communities based on shared preferences and move-in timelines.
                       </p>
-                      <Button variant="outline" className="rounded-none border-grey300 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                      <Button variant="outline" className={`rounded-none ${theme === 'dark' ? 'border-grey700 hover:bg-primary hover:text-white hover:border-primary' : 'border-grey300 hover:bg-primary hover:text-white hover:border-primary'} transition-all`}>
                         Explore Groups
                       </Button>
                     </div>
@@ -223,24 +229,24 @@ export default function HomePage() {
                 <div className="group relative">
                   <div className="grid md:grid-cols-2 gap-8 items-center">
                     <div className="order-2 md:order-1">
-                      <div className="mb-6 inline-flex items-center justify-center w-12 h-12 rounded-full bg-white border border-grey200 shadow-sm">
+                      <div className={`mb-6 inline-flex items-center justify-center w-12 h-12 rounded-full ${theme === 'dark' ? 'bg-grey800 border-grey700' : 'bg-white border-grey200'} border shadow-sm`}>
                         <Shield className="w-5 h-5 text-primary" />
                       </div>
-                      <h3 className="font-heading text-3xl uppercase tracking-wide mb-4">Trust Layers</h3>
-                      <p className="text-grey600 leading-relaxed mb-6">
+                      <h3 className={`font-heading text-3xl uppercase tracking-wide mb-4 ${theme === 'dark' ? 'text-grey100' : 'text-foreground'}`}>Trust Layers</h3>
+                      <p className={`${theme === 'dark' ? 'text-grey400' : 'text-grey600'} leading-relaxed mb-6`}>
                         Security is the foundation of peace. Optional verification layers allow users to badge their profiles, creating a transparent ecosystem of trust without compromising privacy.
                       </p>
-                      <div className="p-4 bg-white border border-grey200 mt-4">
-                        <p className="text-xs text-grey500 uppercase tracking-wider mb-2">Verification Status</p>
+                      <div className={`p-4 ${theme === 'dark' ? 'bg-grey800 border-grey700' : 'bg-white border-grey200'} border mt-4`}>
+                        <p className={`text-xs uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-grey500' : 'text-grey500'}`}>Verification Status</p>
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-full bg-grey100 rounded-full overflow-hidden">
+                          <div className={`h-2 w-full ${theme === 'dark' ? 'bg-grey700' : 'bg-grey100'} rounded-full overflow-hidden`}>
                             <div className="h-full bg-primary w-3/4" />
                           </div>
                           <span className="text-xs font-bold text-primary">SECURE</span>
                         </div>
                       </div>
                     </div>
-                    <div className="order-1 md:order-2 relative h-[400px] overflow-hidden rounded-sm border border-grey200">
+                    <div className={`order-1 md:order-2 relative h-[400px] overflow-hidden rounded-sm border ${theme === 'dark' ? 'border-grey700' : 'border-grey200'}`}>
                        <Image 
                         src="https://static.wixstatic.com/media/c60ce8_99824c8f551b45bbbb9e44d4d2c401f7~mv2.png?originWidth=640&originHeight=384" 
                         alt="Security and trust abstract"
@@ -296,7 +302,7 @@ export default function HomePage() {
         </section>
 
         {/* --- STATS / TRUST TICKER --- */}
-        <section className="py-16 border-b border-grey200 bg-background overflow-hidden">
+        <section className={`py-16 border-b ${theme === 'dark' ? 'border-grey800 bg-grey900' : 'border-grey200 bg-background'} overflow-hidden`}>
           <div className="max-w-[120rem] mx-auto px-6 md:px-12">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               {[
@@ -305,9 +311,9 @@ export default function HomePage() {
                 { label: "Cities Covered", value: "14" },
                 { label: "Trust Score", value: "98%" },
               ].map((stat, i) => (
-                <div key={i} className="flex flex-col items-center justify-center border-r border-grey200 last:border-0">
-                  <span className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-2">{stat.value}</span>
-                  <span className="font-paragraph text-sm uppercase tracking-widest text-grey500">{stat.label}</span>
+                <div key={i} className={`flex flex-col items-center justify-center border-r ${theme === 'dark' ? 'border-grey800' : 'border-grey200'} last:border-0`}>
+                  <span className={`font-heading text-4xl md:text-5xl font-bold ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-2`}>{stat.value}</span>
+                  <span className={`font-paragraph text-sm uppercase tracking-widest ${theme === 'dark' ? 'text-grey500' : 'text-grey500'}`}>{stat.label}</span>
                 </div>
               ))}
             </div>
@@ -315,25 +321,25 @@ export default function HomePage() {
         </section>
 
         {/* --- FINAL CTA --- */}
-        <section className="py-32 px-6 md:px-12 bg-background relative">
-          <GridLines />
+        <section className={`py-32 px-6 md:px-12 ${theme === 'dark' ? 'bg-grey900' : 'bg-background'} relative`}>
+          <GridLines theme={theme} />
           <div className="max-w-4xl mx-auto text-center relative z-10">
-            <SectionLabel number="02" text="Ready to Begin?" />
-            <h2 className="font-heading text-4xl md:text-6xl text-foreground mb-12 uppercase tracking-tight">
+            <SectionLabel number="02" text="Ready to Begin?" theme={theme} />
+            <h2 className={`font-heading text-4xl md:text-6xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-12 uppercase tracking-tight`}>
               The search ends here.
             </h2>
             
             <div className="grid md:grid-cols-2 gap-6">
                <Link to="/find-room" className="group block">
-                  <div className="border border-grey200 p-12 hover:bg-grey100 transition-colors duration-500 flex flex-col items-center">
-                    <Search className="w-12 h-12 text-grey400 mb-6 group-hover:text-primary transition-colors" />
-                    <span className="font-heading text-xl uppercase tracking-wide">I need a room</span>
+                  <div className={`border ${theme === 'dark' ? 'border-grey800 hover:bg-grey800' : 'border-grey200 hover:bg-grey100'} p-12 transition-colors duration-500 flex flex-col items-center`}>
+                    <Search className={`w-12 h-12 ${theme === 'dark' ? 'text-grey600' : 'text-grey400'} mb-6 group-hover:text-primary transition-colors`} />
+                    <span className={`font-heading text-xl uppercase tracking-wide ${theme === 'dark' ? 'text-grey200' : 'text-foreground'}`}>I need a room</span>
                   </div>
                </Link>
                <Link to="/list-room" className="group block">
-                  <div className="border border-grey200 p-12 hover:bg-grey100 transition-colors duration-500 flex flex-col items-center">
-                    <Home className="w-12 h-12 text-grey400 mb-6 group-hover:text-primary transition-colors" />
-                    <span className="font-heading text-xl uppercase tracking-wide">I have a room</span>
+                  <div className={`border ${theme === 'dark' ? 'border-grey800 hover:bg-grey800' : 'border-grey200 hover:bg-grey100'} p-12 transition-colors duration-500 flex flex-col items-center`}>
+                    <Home className={`w-12 h-12 ${theme === 'dark' ? 'text-grey600' : 'text-grey400'} mb-6 group-hover:text-primary transition-colors`} />
+                    <span className={`font-heading text-xl uppercase tracking-wide ${theme === 'dark' ? 'text-grey200' : 'text-foreground'}`}>I have a room</span>
                   </div>
                </Link>
             </div>

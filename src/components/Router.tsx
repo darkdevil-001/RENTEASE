@@ -1,6 +1,8 @@
 import { MemberProvider } from '@/integrations';
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
 import { ScrollToTop } from '@/lib/scroll-to-top';
+import { useEffect } from 'react';
+import { initializeTheme } from '@/lib/theme';
 import ErrorPage from '@/integrations/errorHandlers/ErrorPage';
 import HomePage from '@/components/pages/HomePage';
 import FindRoomPage from '@/components/pages/FindRoomPage';
@@ -13,6 +15,10 @@ import LoginPage from '@/components/pages/LoginPage';
 
 // Layout component that includes ScrollToTop
 function Layout() {
+  useEffect(() => {
+    initializeTheme();
+  }, []);
+
   return (
     <>
       <ScrollToTop />

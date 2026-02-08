@@ -11,12 +11,14 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import ContactOwnerDialog from '@/components/ContactOwnerDialog';
+import { getTheme } from '@/lib/theme';
 
 export default function FindRoomPage() {
   const [rooms, setRooms] = useState<Rooms[]>([]);
   const [filteredRooms, setFilteredRooms] = useState<Rooms[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedRoomForContact, setSelectedRoomForContact] = useState<Rooms | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   
   // Filter states
   const [location, setLocation] = useState('');
@@ -29,14 +31,16 @@ export default function FindRoomPage() {
   const [foodPreference, setFoodPreference] = useState('');
   const [socialPreference, setSocialPreference] = useState('');
   const [paymentType, setPaymentType] = useState('');
+  const [genderPreference, setGenderPreference] = useState('');
 
   useEffect(() => {
+    setTheme(getTheme());
     loadRooms();
   }, []);
 
   useEffect(() => {
     applyFilters();
-  }, [rooms, location, minBudget, maxBudget, roomType, capacity, isStudentFriendly, isSmokingAllowed, foodPreference, socialPreference, paymentType]);
+  }, [rooms, location, minBudget, maxBudget, roomType, capacity, isStudentFriendly, isSmokingAllowed, foodPreference, socialPreference, paymentType, genderPreference]);
 
   const loadRooms = async () => {
     setIsLoading(true);
@@ -108,6 +112,18 @@ export default function FindRoomPage() {
       });
     }
 
+    if (genderPreference && genderPreference !== 'Any') {
+      filtered = filtered.filter(room => {
+        const roomGender = room.socialPreference;
+        if (genderPreference === 'Male') {
+          return roomGender === 'Male' || roomGender === 'Any';
+        } else if (genderPreference === 'Female') {
+          return roomGender === 'Female' || roomGender === 'Any';
+        }
+        return true;
+      });
+    }
+
     setFilteredRooms(filtered);
   };
 
@@ -122,30 +138,31 @@ export default function FindRoomPage() {
     setFoodPreference('');
     setSocialPreference('');
     setPaymentType('');
+    setGenderPreference('');
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-grey900' : 'bg-background'}`}>
       <Header />
       
       <main className="flex-1">
         <section className="w-full max-w-[100rem] mx-auto px-8 py-16">
-          <h1 className="font-heading text-5xl md:text-6xl text-foreground mb-4 uppercase tracking-tight">
+          <h1 className={`font-heading text-5xl md:text-6xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-4 uppercase tracking-tight`}>
             Find Your Perfect Room
           </h1>
-          <p className="font-paragraph text-lg text-secondary mb-12">
+          <p className={`font-paragraph text-lg ${theme === 'dark' ? 'text-grey400' : 'text-secondary'} mb-12`}>
             Search and filter rooms based on your preferences
           </p>
 
           {/* Filters */}
-          <div className="bg-grey100 p-8 mb-16">
-            <h2 className="font-heading text-xl text-foreground mb-6 uppercase tracking-wide">
+          <div className={`${theme === 'dark' ? 'bg-grey800' : 'bg-grey100'} p-8 mb-16`}>
+            <h2 className={`font-heading text-xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-6 uppercase tracking-wide`}>
               Search Preferences
             </h2>
             
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div>
-                <Label htmlFor="location" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="location" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Preferred Location
                 </Label>
                 <Input
@@ -154,12 +171,12 @@ export default function FindRoomPage() {
                   placeholder="Enter location"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="bg-background border-grey300"
+                  className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                 />
               </div>
 
               <div>
-                <Label htmlFor="minBudget" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="minBudget" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Min Budget ($)
                 </Label>
                 <Input
@@ -168,12 +185,12 @@ export default function FindRoomPage() {
                   placeholder="Min budget"
                   value={minBudget}
                   onChange={(e) => setMinBudget(e.target.value)}
-                  className="bg-background border-grey300"
+                  className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                 />
               </div>
 
               <div>
-                <Label htmlFor="maxBudget" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="maxBudget" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Max Budget ($)
                 </Label>
                 <Input
@@ -182,16 +199,16 @@ export default function FindRoomPage() {
                   placeholder="Max budget"
                   value={maxBudget}
                   onChange={(e) => setMaxBudget(e.target.value)}
-                  className="bg-background border-grey300"
+                  className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}
                 />
               </div>
 
               <div>
-                <Label htmlFor="paymentType" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="paymentType" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Payment Type
                 </Label>
                 <Select value={paymentType} onValueChange={setPaymentType}>
-                  <SelectTrigger id="paymentType" className="bg-background border-grey300">
+                  <SelectTrigger id="paymentType" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                     <SelectValue placeholder="Select payment type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -203,11 +220,11 @@ export default function FindRoomPage() {
               </div>
 
               <div>
-                <Label htmlFor="roomType" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="roomType" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Room Type
                 </Label>
                 <Select value={roomType} onValueChange={setRoomType}>
-                  <SelectTrigger id="roomType" className="bg-background border-grey300">
+                  <SelectTrigger id="roomType" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -218,11 +235,11 @@ export default function FindRoomPage() {
               </div>
 
               <div>
-                <Label htmlFor="capacity" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="capacity" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Number of Roommates
                 </Label>
                 <Select value={capacity} onValueChange={setCapacity}>
-                  <SelectTrigger id="capacity" className="bg-background border-grey300">
+                  <SelectTrigger id="capacity" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                     <SelectValue placeholder="Select capacity" />
                   </SelectTrigger>
                   <SelectContent>
@@ -236,11 +253,11 @@ export default function FindRoomPage() {
               </div>
 
               <div>
-                <Label htmlFor="studentFriendly" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="studentFriendly" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Student/Working
                 </Label>
                 <Select value={isStudentFriendly} onValueChange={setIsStudentFriendly}>
-                  <SelectTrigger id="studentFriendly" className="bg-background border-grey300">
+                  <SelectTrigger id="studentFriendly" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                     <SelectValue placeholder="Select preference" />
                   </SelectTrigger>
                   <SelectContent>
@@ -251,11 +268,11 @@ export default function FindRoomPage() {
               </div>
 
               <div>
-                <Label htmlFor="smoking" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="smoking" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Smoking Preference
                 </Label>
                 <Select value={isSmokingAllowed} onValueChange={setIsSmokingAllowed}>
-                  <SelectTrigger id="smoking" className="bg-background border-grey300">
+                  <SelectTrigger id="smoking" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                     <SelectValue placeholder="Select preference" />
                   </SelectTrigger>
                   <SelectContent>
@@ -266,11 +283,11 @@ export default function FindRoomPage() {
               </div>
 
               <div>
-                <Label htmlFor="food" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="food" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Food Preference
                 </Label>
                 <Select value={foodPreference} onValueChange={setFoodPreference}>
-                  <SelectTrigger id="food" className="bg-background border-grey300">
+                  <SelectTrigger id="food" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                     <SelectValue placeholder="Select preference" />
                   </SelectTrigger>
                   <SelectContent>
@@ -283,11 +300,11 @@ export default function FindRoomPage() {
               </div>
 
               <div>
-                <Label htmlFor="social" className="font-paragraph text-sm text-foreground mb-2 block">
+                <Label htmlFor="social" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
                   Social Preference
                 </Label>
                 <Select value={socialPreference} onValueChange={setSocialPreference}>
-                  <SelectTrigger id="social" className="bg-background border-grey300">
+                  <SelectTrigger id="social" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
                     <SelectValue placeholder="Select preference" />
                   </SelectTrigger>
                   <SelectContent>
@@ -296,12 +313,28 @@ export default function FindRoomPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div>
+                <Label htmlFor="gender" className={`font-paragraph text-sm ${theme === 'dark' ? 'text-grey200' : 'text-foreground'} mb-2 block`}>
+                  Gender Preference
+                </Label>
+                <Select value={genderPreference} onValueChange={setGenderPreference}>
+                  <SelectTrigger id="gender" className={`${theme === 'dark' ? 'bg-grey700 border-grey600 text-grey100' : 'bg-background border-grey300'}`}>
+                    <SelectValue placeholder="Select preference" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Any">Any</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <Button 
               onClick={resetFilters}
               variant="outline"
-              className="border-grey400 text-foreground hover:bg-grey100"
+              className={`${theme === 'dark' ? 'border-grey600 text-grey200 hover:bg-grey700' : 'border-grey400 text-foreground hover:bg-grey100'}`}
             >
               Reset Filters
             </Button>
@@ -309,7 +342,7 @@ export default function FindRoomPage() {
 
           {/* Results */}
           <div className="min-h-[400px]">
-            <h2 className="font-heading text-2xl text-foreground mb-8 uppercase tracking-wide">
+            <h2 className={`font-heading text-2xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-8 uppercase tracking-wide`}>
               Available Rooms ({filteredRooms.length})
             </h2>
 
@@ -328,7 +361,7 @@ export default function FindRoomPage() {
                     transition={{ duration: 0.3 }}
                   >
                     <Link to={`/room/${room._id}`} className="block group">
-                      <div className="border border-grey300 hover:border-primary transition-colors bg-background">
+                      <div className={`border ${theme === 'dark' ? 'border-grey700 hover:border-primary bg-grey800' : 'border-grey300 hover:border-primary bg-background'} transition-colors`}>
                         {room.roomImage && (
                           <div className="aspect-[4/3] overflow-hidden">
                             <Image
@@ -340,10 +373,10 @@ export default function FindRoomPage() {
                           </div>
                         )}
                         <div className="p-6">
-                          <h3 className="font-heading text-xl text-foreground mb-2 uppercase tracking-wide">
+                          <h3 className={`font-heading text-xl ${theme === 'dark' ? 'text-grey100' : 'text-foreground'} mb-2 uppercase tracking-wide`}>
                             {room.location}
                           </h3>
-                          <p className="font-paragraph text-base text-secondary mb-4">
+                          <p className={`font-paragraph text-base ${theme === 'dark' ? 'text-grey400' : 'text-secondary'} mb-4`}>
                             {room.roomType} • {room.capacity} {room.capacity === 1 ? 'Person' : 'People'}
                           </p>
                           <div className="mb-4">
@@ -351,29 +384,29 @@ export default function FindRoomPage() {
                               ${room.monthlyRent}/month
                             </p>
                             {room.leaseAmount && (room.leaseOption === 'Lease only' || room.leaseOption === 'Rent + Lease') && (
-                              <p className="font-paragraph text-base text-secondary">
+                              <p className={`font-paragraph text-base ${theme === 'dark' ? 'text-grey400' : 'text-secondary'}`}>
                                 Lease: ${room.leaseAmount}
                               </p>
                             )}
                           </div>
                           <div className="flex flex-wrap gap-2 mb-4">
                             {room.isStudentFriendly && (
-                              <span className="font-paragraph text-xs text-foreground bg-grey100 px-3 py-1">
+                              <span className={`font-paragraph text-xs ${theme === 'dark' ? 'text-grey200 bg-grey700' : 'text-foreground bg-grey100'} px-3 py-1`}>
                                 Student Friendly
                               </span>
                             )}
                             {room.isSmokingAllowed !== undefined && (
-                              <span className="font-paragraph text-xs text-foreground bg-grey100 px-3 py-1">
+                              <span className={`font-paragraph text-xs ${theme === 'dark' ? 'text-grey200 bg-grey700' : 'text-foreground bg-grey100'} px-3 py-1`}>
                                 {room.isSmokingAllowed ? 'Smoking' : 'Non-Smoking'}
                               </span>
                             )}
                             {room.foodPreference && (
-                              <span className="font-paragraph text-xs text-foreground bg-grey100 px-3 py-1">
+                              <span className={`font-paragraph text-xs ${theme === 'dark' ? 'text-grey200 bg-grey700' : 'text-foreground bg-grey100'} px-3 py-1`}>
                                 {room.foodPreference}
                               </span>
                             )}
                             {room.occupancyType === 'Partially Occupied' && (
-                              <span className="font-paragraph text-xs text-foreground bg-primary/10 px-3 py-1 border border-primary">
+                              <span className={`font-paragraph text-xs ${theme === 'dark' ? 'text-primary bg-primary/20 border-primary' : 'text-foreground bg-primary/10 border-primary'} px-3 py-1 border`}>
                                 {room.currentMembers} member{room.currentMembers !== 1 ? 's' : ''} • {Math.max(0, (room.capacity || 0) - (room.currentMembers || 0))} slot{Math.max(0, (room.capacity || 0) - (room.currentMembers || 0)) !== 1 ? 's' : ''} available
                               </span>
                             )}
@@ -396,7 +429,7 @@ export default function FindRoomPage() {
               </motion.div>
             ) : (
               <div className="text-center py-16">
-                <p className="font-paragraph text-lg text-secondary">
+                <p className={`font-paragraph text-lg ${theme === 'dark' ? 'text-grey400' : 'text-secondary'}`}>
                   No rooms found matching your preferences. Try adjusting your filters.
                 </p>
               </div>

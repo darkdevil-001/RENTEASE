@@ -3,3 +3,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark mode styles */
+:root.dark {
+  color-scheme: dark;
+}
+
+:root.dark {
+  --foreground: #ffffff;
+  --background: #1c1c1e;
+  --secondary: #8e8e93;
+  --primary: #007aff;
+  --grey100: #2c2c2e;
+  --grey200: #3a3a3c;
+  --grey300: #636366;
+  --grey400: #8e8e93;
+  --grey500: #a1a1a6;
+  --grey600: #c7c7cc;
+  --grey700: #d1d1d6;
+  --grey800: #e5e5ea;
+  --grey900: #f2f2f7;
+}
+
